@@ -1,0 +1,39 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit23H
+#define Unit23H
+//---------------------------------------------------------------------------
+#include <Classes.hpp>
+#include <Controls.hpp>
+#include <StdCtrls.hpp>
+#include <Forms.hpp>
+#include "sCheckBox.hpp"
+//---------------------------------------------------------------------------
+class TForm23 : public TForm
+{
+__published:	// IDE-managed Components
+        TsCheckBox *sCheckBox55;
+        TsCheckBox *sCheckBox56;
+        TsCheckBox *sCheckBox57;
+        TsCheckBox *sCheckBox58;
+        TsCheckBox *sCheckBox59;
+        TsCheckBox *sCheckBox60;
+        TsCheckBox *sCheckBox61;
+        TsCheckBox *sCheckBox62;
+        TsCheckBox *sCheckBox63;
+        TsCheckBox *sCheckBox64;
+        TsCheckBox *sCheckBox65;
+        TsCheckBox *sCheckBox66;
+        TsCheckBox *sCheckBox67;
+        TsCheckBox *sCheckBox68;
+        TsCheckBox *sCheckBox69;
+        TsCheckBox *sCheckBox70;
+        void __fastcall FormShow(TObject *Sender);
+private:	// User declarations
+public:		// User declarations
+        __fastcall TForm23(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm23 *Form23;
+//---------------------------------------------------------------------------
+#endif

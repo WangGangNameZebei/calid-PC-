@@ -1,0 +1,7 @@
+1、先安装   
+  2、找到它的组件板   
+  3、把sSkinManager1控件放到窗体上，   
+  4、点击右键,在点击出现的interial skin，找到skins的安装目录的skins子目录，随便点击一个skin即可 
+  5, sSkinManager1->skinname上选上上面所选的名字。
+  6，把sSkinProvider1控件放到窗体上，
+  7，把UseGlobalColor->true.

@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="Project1.exe"/>
+    <OBJFILES value="Project1.obj Unit1.obj Unit2.obj Unit3.obj Unit4.obj Unit5.obj Unit6.obj 
+      Unit7.obj Unit8.obj Unit9.obj Unit10.obj Unit11.obj Unit12.obj Unit13.obj 
+      Unit14.obj Unit15.obj Unit16.obj Unit17.obj Unit18.obj Unit19.obj 
+      Unit20.obj Unit21.obj Unit22.obj Unit23.obj Unit24.obj"/>
+    <RESFILES value="Project1.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) Unit1.dfm Unit2.dfm Unit3.dfm Unit5.dfm Unit6.dfm Unit7.dfm 
+      Unit8.dfm Unit9.dfm Unit10.dfm Unit11.dfm Unit12.dfm Unit13.dfm Unit14.dfm 
+      Unit15.dfm Unit16.dfm Unit17.dfm Unit18.dfm Unit19.dfm Unit20.dfm 
+      Unit21.dfm Unit22.dfm Unit23.dfm Unit24.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="HidBcb.lib bcbsmp.lib vclx.lib acntBCB6_R.lib adortl.lib dbrtl.lib 
+      vcldb.lib rtl.lib vcl.lib"/>
+    <SPARELIBS value="vcl.lib rtl.lib vcldb.lib dbrtl.lib adortl.lib acntBCB6_R.lib vclx.lib 
+      bcbsmp.lib HidBcb.lib"/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vclie.bpi xmlrtl.bpi inet.bpi 
+      inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
+      bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
+      indy.bpi bcb2kaxserver.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="Project1.cpp"/>
+    <INCLUDEPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;&quot;D:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;&quot;E:\hf\e\C++Builder rs232\EX\CH5\Binary&quot;;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6"/>
+    <LIBPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;&quot;D:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;&quot;E:\hf\e\C++Builder rs232\EX\CH5\Binary&quot;;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot; 
+      -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; 
+      -I&quot;D:\Program Files (x86)\Borland\CBuilder6\Projects&quot; -IF:\ch21an 
+      -ID:\Borland\CBuilder6\Projects -I$(BCB)\lib\skin 
+      -I&quot;E:\hf\e\C++Builder rs232\EX\CH5\Binary&quot; -IF:\MFCON -I$(BCB)\include 
+      -I$(BCB)\include\vcl -ID:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6 
+      -IE:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6 
+      -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-$Y+ -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zi"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -GD -s -M -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="Project1.res" FORMNAME="" UNITNAME="Project1.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Project1.cpp" FORMNAME="" UNITNAME="Project1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit1.cpp" FORMNAME="Form1" UNITNAME="Unit1" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit2.cpp" FORMNAME="tcon" UNITNAME="Unit2" CONTAINERID="CCompiler" DESIGNCLASS="TDataModule" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit3.cpp" FORMNAME="Form3" UNITNAME="Unit3" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit4.cpp" FORMNAME="" UNITNAME="Unit4" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit5.cpp" FORMNAME="Form5" UNITNAME="Unit5" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit6.cpp" FORMNAME="Form6" UNITNAME="Unit6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit7.cpp" FORMNAME="Form7" UNITNAME="Unit7" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit8.cpp" FORMNAME="Form8" UNITNAME="Unit8" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit9.cpp" FORMNAME="Form9" UNITNAME="Unit9" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit10.cpp" FORMNAME="Form10" UNITNAME="Unit10" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit11.cpp" FORMNAME="Form11" UNITNAME="Unit11" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit12.cpp" FORMNAME="Form12" UNITNAME="Unit12" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit13.cpp" FORMNAME="FrmBar" UNITNAME="Unit13" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit14.cpp" FORMNAME="Form14" UNITNAME="Unit14" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit15.cpp" FORMNAME="Form15" UNITNAME="Unit15" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit16.cpp" FORMNAME="tcon1" UNITNAME="Unit16" CONTAINERID="CCompiler" DESIGNCLASS="TDataModule" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit17.cpp" FORMNAME="tcon2" UNITNAME="Unit17" CONTAINERID="CCompiler" DESIGNCLASS="TDataModule" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit18.cpp" FORMNAME="Form18" UNITNAME="Unit18" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit19.cpp" FORMNAME="Form19" UNITNAME="Unit19" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit20.cpp" FORMNAME="Form20" UNITNAME="Unit20" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit21.cpp" FORMNAME="Form21" UNITNAME="Unit21" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit22.cpp" FORMNAME="Form22" UNITNAME="Unit22" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit23.cpp" FORMNAME="Form23" UNITNAME="Unit23" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="Unit24.cpp" FORMNAME="Form24" UNITNAME="Unit24" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=2052
+CodePage=936
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=6
+Item0=C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\Program Files\Borland\CBuilder6\Projects;D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+Item1=C:\Program Files\Borland\CBuilder6\Projects;D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+Item2=D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+Item3=F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+Item4=D:\Borland\CBuilder6\Projects;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+Item5=$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\include;$(BCB)\include\vcl;D:\Borland\CBuilder6\Lib\RECOiL\Include\BCB6;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Include\BCB6
+
+[HistoryLists\hlLibraryPath]
+Count=6
+Item0=C:\Program Files (x86)\Borland\CBuilder6\Projects;C:\Program Files\Borland\CBuilder6\Projects;D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+Item1=C:\Program Files\Borland\CBuilder6\Projects;D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+Item2=D:\Program Files (x86)\Borland\CBuilder6\Projects;F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+Item3=F:\ch21an;D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+Item4=D:\Borland\CBuilder6\Projects;$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+Item5=$(BCB)\Projects\Lib;$(BCB)\lib\skin;E:\hf\e\C++Builder rs232\EX\CH5\Binary;F:\MFCON;$(BCB)\lib\obj;$(BCB)\lib;D:\Borland\CBuilder6\Lib\RECOiL\Source;E:\hf\e\界面\SUIPack.v5.6.Delphi.567.BCB.56.Full.Sources\RECOiL\Source
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+  </IDEOPTIONS>
+</PROJECT>

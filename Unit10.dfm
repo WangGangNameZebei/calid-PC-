@@ -1,0 +1,79 @@
+object Form10: TForm10
+  Left = 187
+  Top = 168
+  Width = 447
+  Height = 92
+  BorderIcons = [biSystemMenu]
+  Caption = #20449#24687
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object sLabel1: TsLabel
+    Left = 8
+    Top = 24
+    Width = 165
+    Height = 13
+    Caption = #35831#36873#25321#20351#29992#27425#25968#65306'                       '
+    ParentFont = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+  end
+  object sButton1: TsButton
+    Left = 328
+    Top = 16
+    Width = 75
+    Height = 25
+    Caption = #30830#35748
+    TabOrder = 0
+    OnClick = sButton1Click
+    SkinData.SkinSection = 'BUTTON'
+  end
+  object sEdit1: TsEdit
+    Left = 128
+    Top = 16
+    Width = 121
+    Height = 21
+    Color = clWhite
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    Text = '50'
+    OnKeyPress = sEdit1KeyPress
+    SkinData.SkinSection = 'EDIT'
+    BoundLabel.Indent = 0
+    BoundLabel.Font.Charset = DEFAULT_CHARSET
+    BoundLabel.Font.Color = clWindowText
+    BoundLabel.Font.Height = -11
+    BoundLabel.Font.Name = 'MS Sans Serif'
+    BoundLabel.Font.Style = []
+    BoundLabel.Layout = sclLeft
+    BoundLabel.MaxWidth = 0
+    BoundLabel.UseSkinColor = True
+  end
+  object sCheckBox1: TsCheckBox
+    Left = 256
+    Top = 16
+    Width = 20
+    Height = 20
+    Checked = True
+    State = cbChecked
+    TabOrder = 2
+    SkinData.SkinSection = 'CHECKBOX'
+    ImgChecked = 0
+    ImgUnchecked = 0
+  end
+end

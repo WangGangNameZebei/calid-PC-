@@ -1,0 +1,35 @@
+在Project   Options   中 
+Packages页中RunTime   Package里的Build   with   runtime   packages   前面的勾去掉 
+Linker页钟的linking   中的USE   dynamic   RTL   的勾去掉 
+////compiler页中按下Release
+
+
+
+
+C++builder如何让SpeedButton按钮显示"×"或"▲"等符号？
+步骤：1、将SpeedButton按钮属性Caption中输入"5" 或"6"或"r"等；
+      2、将Font属性中Name改为"Marlett"，ChartSet设为"SYMBOL_CHARSET"。
+本例仅起到抛砖引玉的作用，愿意深入研究者，肯定会发现更多的秘密！
+
+
+ C++BUILDER中拖动某窗体或控件的方法？
+在窗体或控件的lMouseDown事件中写入如下代码即可。
+if(Button==mbLeft)
+{
+  int SC_DragMove=61458;
+  ReleaseCapture();
+  Form1->Perform(WM_SYSCOMMAND,SC_DragMove,0);
+}
+
+
+如何遍历某控件（容器）上的其他指定类型的控件？
+下面以遍历Panel上的所有TLabel类的控件为例。方法如下：
+while(...)
+{
+  if(Panel1->Controls[i]->ClassNameIs("TLabel"))    //判断控件类名
+  {
+    TLabel *pla;
+    pla=dynamic_cast <TLabel *>(Panel1->Controls[i]);//强行转换指针类型
+    //................
+  } 
+}

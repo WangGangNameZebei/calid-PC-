@@ -1,0 +1,25 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit16H
+#define Unit16H
+//---------------------------------------------------------------------------
+#include <Classes.hpp>
+#include <Controls.hpp>
+#include <StdCtrls.hpp>
+#include <Forms.hpp>
+#include <ADODB.hpp>
+#include <DB.hpp>
+//---------------------------------------------------------------------------
+class TDataModule16 : public TDataModule
+{
+__published:	// IDE-managed Components
+        TADOConnection *ADOConnection2;
+        TADOQuery *adoquery1;
+private:	// User declarations
+public:		// User declarations
+        __fastcall TDataModule16(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TDataModule16 *DataModule16;
+//---------------------------------------------------------------------------
+#endif
