@@ -266,9 +266,11 @@ int id;
 
 void __fastcall TForm20::sButton2Click(TObject *Sender)
 {
-String nok,ins,UserCID,Temp,Temp1,qstr,tp1,tp2;
+String nok,ins,UserCID,Temp,Temp1,qstr,tp1,tp2,data1,data2;
 nok=sEdit1->Text;
 sButton2->Enabled=false; //
+unsigned char returnSign;   //写入 反正标记
+unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
 //if(sEdit1->Text =="")
 //  {
 //  Application->MessageBoxA("请选择用户!!","问题",MB_OK);
@@ -276,6 +278,7 @@ sButton2->Enabled=false; //
 //  return;
 //  }
 //nok1=Edit23->Text;
+  if(Form1->CurrentDevice == NULL) {
 String scom=Form1->ComboBox1->Text;
        if(scom=="")
        scom="1";
@@ -285,6 +288,7 @@ bool reresult = USB_DevInit(StrToInt(scom));
         sButton2->Enabled=true; //
         return;
         }
+ }
 ////-------------------
 if(inipwdpoc=="1")
      jiamityn();
@@ -301,6 +305,7 @@ ins="select * from userinfo where jijiangguashi='1' ";
      tcon->adoquery->Next();
      }
    UserCID=UserCID+"000000000000000000000000000000000000000000000000";
+   if(Form1->CurrentDevice == NULL) {
    tp1=UserCID.SubString(1,8);
    tp2=UserCID.SubString(9,32);
 
@@ -327,6 +332,14 @@ ins="select * from userinfo where jijiangguashi='1' ";
     }
  if (!USB_DevClose())
          Caption = "关闭串口失败";
+  } else {      // HID USB
+   data2=UserCID.SubString(1,24);
+    Form1->erase(0x02); // 擦除
+    data1 = "ABC003" + data2;
+    returnSign = Form1->DataWrite(newData1,data1);
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
+               else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+  }
 sButton2->Enabled=true; //
 }
 //---------------------------------------------------------------------------

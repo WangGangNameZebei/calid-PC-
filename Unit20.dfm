@@ -18,7 +18,7 @@ object Form20: TForm20
   object StringGrid3: TStringGrid
     Left = 0
     Top = 0
-    Width = 986
+    Width = 994
     Height = 537
     Align = alTop
     BiDiMode = bdLeftToRight
@@ -63,6 +63,7 @@ object Form20: TForm20
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
     ParentFont = False
     TabOrder = 3
     Visible = False

@@ -12217,9 +12217,6 @@ else
    char *value2;
    AnsiString a1,a2;
   unsigned int I,s1;
-   newData[6] = StrToIntDef("$" + Edit2->Text, 0);
-    if(CurrentDevice != NULL)
-  {
   Form7->Memo1->Clear();
     ToWrite = CurrentDevice->Caps.OutputReportByteLength;
     for(I = 0; I < ToWrite; I++) {
@@ -12233,10 +12230,10 @@ else
 
       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-    if (BUFF[7] == 0x00){
-      Caption = "寻卡成功";
-      s1 =  bianhaoAction (BUFF[11],BUFF[12]);
+
       if(BUFF[7]==0x00){
+      Caption = "寻卡成功";
+       s1 =  bianhaoAction (BUFF[11],BUFF[12]);
       a1 =IntToStr(s1);
        Form7->Memo1->Lines->Add("编号: "+a1+"\n");
        Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
@@ -12299,8 +12296,6 @@ else
           Form7->Memo1->Lines->Add(a2+'\n');
          }
        }
-
-
        Form7->sButton1->Visible = true;
        Form7->ShowModal();  // Form7 调用显示模式
                 }else{Application->MessageBoxA("读取地址3返回失败!!","问题",MB_OK);}
@@ -12308,12 +12303,6 @@ else
            }else{Application->MessageBoxA("读取地址1返回失败!!","问题",MB_OK);}
          }else{Application->MessageBoxA("读取层数返回失败!!","问题",MB_OK);}
       }else { Application->MessageBoxA("读取用户返回失败!!","问题",MB_OK); }
-
-    } else {
-      Caption = "寻卡失败";
-    }
-
-     }
      sButton17->Enabled=true; //读卡开
     }    //  USB  选择结尾括号
 }
@@ -13052,9 +13041,12 @@ else
 void __fastcall TForm1::sButton16Click(TObject *Sender)
 {
 sButton16->Enabled=false;
-String Temp,st1,st2,st3,st4,st5,st6,atime,a,ins,b;
+String Temp,st1,st2,st3,st4,st5,st6,atime,a,ins,b,second;
+unsigned char returnSign;   //写入 反正标记
+unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
 if(MessageDlg("此卡可对控制器进行时间校正。 ",mtInformation,TMsgDlgButtons()<<mbOK<<mbCancel,0)==IDOK)
 {
+   if(CurrentDevice == NULL) {
 String scom=Form1->ComboBox1->Text;
        if(scom=="")
        scom="1";
@@ -13064,6 +13056,7 @@ bool reresult = USB_DevInit(StrToInt(scom));
         sButton16->Enabled=true; //
         return;
         }
+     }
 ////-------------------
 if(inipwdpoc=="1")
      jiamityn();
@@ -13140,6 +13133,7 @@ if(st6=="07")
 ;06h   为功能选择，01为设置控制器地址和密码用，02为设置时间年月日时分秒用
 ;07h 08h 09h 0ah 0bh 0ch  为年月日时分秒
 ; 0dh 0eh 0fh 为无       */
+  if(CurrentDevice == NULL) {
   Temp="6D696661726502"+conpwd+st1+st2+st3+st4+st5+st6;
 
 if(!fkqyn()){
@@ -13158,6 +13152,19 @@ sButton16->Enabled=true; //
  if (!USB_DevClose())
          Caption = "关闭串口失败";
 FrmBar->PBarClose();
+ } else {   // HID USB
+   SYSTEMTIME *GTL;
+   GTL=new SYSTEMTIME;
+    GetLocalTime(GTL);
+    second="0"+String(GTL->wSecond);
+    second=second.SubString(second.Length()-1,2);
+    erase(0x02); // 擦除
+    Temp="ABC002"+st1+st2+st3+st6+st4+st5+second;
+    returnSign = DataWrite(newData1,Temp);
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
+               else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+    
+ }
 }
    sButton16->Enabled=true;
 }
@@ -17917,10 +17924,14 @@ StaticText2->Caption="0";
 
 void __fastcall TForm1::sButton25Click(TObject *Sender)
 {
-String Temp,ins,sector,yanzhengdata,read0syn,funs1;
+String Temp,ins,sector,yanzhengdata,read0syn,funs1,data;
 sButton25->Enabled=false; //
+unsigned char returnSign;   //写入 反正标记
+unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
+
 if(MessageDlg("此卡仅用于出厂控制器，仅刷一次，刷后与软件匹配不可更改",mtInformation,TMsgDlgButtons()<<mbOK<<mbCancel,0)==IDOK)
 {
+  if(CurrentDevice == NULL) {
 String scom=Form1->ComboBox1->Text;
        if(scom=="")
        scom="1";
@@ -17930,6 +17941,7 @@ bool reresult = USB_DevInit(StrToInt(scom));
     sButton25->Enabled=true; //
         return;
         }
+    }
  try
          {
          Form11=new TForm11(Application);
@@ -17948,6 +17960,7 @@ sButton25->Enabled=true; //
 }
       
 ////-------------------
+
 if(inipwdpoc=="1")
    {
      FrmBar->PBarOpen(15);
@@ -18008,7 +18021,7 @@ funs1=IntToHex(StrToInt(funs1),1);
 Temp="6D696661726511"+userCID123+conpwd+sector+funs1+read0syn+functionfig;
 
 yanzhengdata="38147369147369000000000000000000";
-
+   if(CurrentDevice == NULL) {
 if(!fkqyn()){
 if (!USB_DevClose())
    Caption = "关闭串口失败";
@@ -18046,6 +18059,14 @@ char Data[32] = {0};
          Form1->Caption = "关闭串口失败";
          }
 FrmBar->PBarClose();
+    } else {       //hid USB  设置出厂卡
+     erase(0x02); // 擦除
+     Temp=userCID123+conpwd;
+    data = "ABC011"+Temp;
+    returnSign = DataWrite(newData1,data);
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
+               else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+    }
 }
  sButton25->Enabled=true; //
 }
@@ -23455,8 +23476,8 @@ char __fastcall TForm1::ReadData(char address) {
 void __fastcall TForm1::erase(char number){
    unsigned char Buf[65],BUFF[65];
    unsigned int ToWrite,I,Written;
-   unsigned char newData[20]={0x00,0xaa,0x01,0x01,0x01,0x03,0x01,0xFF,0x65,0x72,0x61,0x73,0x65,0x14,0x73,0x69,0x14,0x73,0x69,0x02};
-   newData[19] = number;
+   unsigned char newData[20]={0x00,0xaa,0x01,0x01,0x01,0x03,0x01,0xFF,0x65,0x72,0x61,0x73,0x65,0x02};
+   newData[13] = number;
     if(CurrentDevice != NULL)
   {
     ToWrite = CurrentDevice->Caps.OutputReportByteLength;
@@ -23472,8 +23493,6 @@ void __fastcall TForm1::erase(char number){
      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   // 读
      if (BUFF[7] != 0x00)
         Application->MessageBoxA("擦除返回失败!!","问题",MB_OK);
-    }else {
-      Application->MessageBoxA("没有检测到USB!!","问题",MB_OK);
     }
 }
 
@@ -23568,5 +23587,7 @@ char __fastcall TForm1::judgeFunction(unsigned char add[],int acc) {
   }
   return add1;
 }
+
+
 
 
