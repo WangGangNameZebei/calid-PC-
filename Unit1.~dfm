@@ -44,9 +44,6 @@ object Form1: TForm1
       Caption = #29992#25143#31649#29702
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      DesignSize = (
-        1007
-        665)
       object Label56: TLabel
         Left = 904
         Top = 384
@@ -62,27 +59,6 @@ object Form1: TForm1
         Height = 13
         Caption = 'UserCID '
         Visible = False
-      end
-      object ReadBtn: TSpeedButton
-        Left = 320
-        Top = 640
-        Width = 81
-        Height = 25
-        AllowAllUp = True
-        Anchors = [akLeft, akBottom]
-        GroupIndex = 1
-        Caption = 'Read'
-        OnClick = ReadBtnClick
-      end
-      object WriteBtn: TSpeedButton
-        Left = 408
-        Top = 640
-        Width = 81
-        Height = 25
-        AllowAllUp = True
-        Anchors = [akLeft, akBottom]
-        Caption = 'Read HID'
-        OnClick = WriteBtnClick
       end
       object StringGrid3: TStringGrid
         Left = 24
@@ -898,45 +874,6 @@ object Form1: TForm1
         SkinData.SkinSection = 'CHECKBOX'
         ImgChecked = 0
         ImgUnchecked = 0
-      end
-      object DevListBox: TListBox
-        Left = 319
-        Top = 488
-        Width = 445
-        Height = 33
-        Anchors = [akLeft, akTop, akRight]
-        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-        ItemHeight = 13
-        TabOrder = 22
-        OnClick = DevListBoxClick
-      end
-      object HistoryListBox: TListBox
-        Left = 0
-        Top = 524
-        Width = 1009
-        Height = 109
-        Anchors = [akLeft, akTop, akRight, akBottom]
-        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-        ItemHeight = 13
-        TabOrder = 23
-      end
-      object ReportID: TEdit
-        Left = 152
-        Top = 640
-        Width = 25
-        Height = 21
-        Anchors = [akLeft, akBottom]
-        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-        TabOrder = 24
-      end
-      object Edit2: TEdit
-        Left = 200
-        Top = 640
-        Width = 25
-        Height = 21
-        Anchors = [akLeft, akBottom]
-        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-        TabOrder = 25
       end
     end
     object sTabSheet2: TsTabSheet

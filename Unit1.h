@@ -433,12 +433,6 @@ __published:	// IDE-managed Components
         TsCheckBox *sCheckBox35;
         TMenuItem *N30;
         TJvHidDeviceController *JvHidDeviceController1;
-        TSpeedButton *ReadBtn;
-        TSpeedButton *WriteBtn;
-        TListBox *DevListBox;
-        TListBox *HistoryListBox;
-        TEdit *ReportID;
-        TEdit *Edit2;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
@@ -660,16 +654,13 @@ __published:	// IDE-managed Components
           TObject *Sender);
         void __fastcall HidCtlDeviceDataError(TJvHidDevice *HidDev,
           DWORD Error);
-        void __fastcall DevListBoxClick(TObject *Sender);
-        void __fastcall ReadBtnClick(TObject *Sender);
-        void __fastcall WriteBtnClick(TObject *Sender);
 
 private:	// User declarations
 
 public:		// User declarations
 
 
-         TEdit *Edits[64];
+
         TJvHidDevice *CurrentDevice;
         __fastcall TForm1(TComponent* Owner);
         void __fastcall ShowRead(TJvHidDevice *HidDev,

@@ -3298,69 +3298,26 @@ if (!USB_DevClose()) {
 
 //-----------------------------usb   usb usb   usb  usb  usb  usb ----------------------------------------------
 //---------------------------------------------------------------------------
-
-void __fastcall TForm1::ShowRead(TJvHidDevice *HidDev,
-      BYTE ReportID, const void *Data, WORD Size)
-{
-  WORD I;
-  AnsiString Str;
-  AnsiString S;
-  char *P;
-
-  P = (char *) Data;
-  Str.sprintf("R %02X  ", ReportID);    
-  for(I = 0; I < Size; I++)
-     Str += S.sprintf("%02X ", (unsigned char) P[I]);
-  HistoryListBox->ItemIndex = HistoryListBox->Items->Add(Str);
-
-}
-//---------------------------------------------------------------------------
 bool __fastcall TForm1::JvHidDeviceController1Enumerate(
       TJvHidDevice *HidDev, const int Idx)
 {
-     int N;
-  TJvHidDevice *Dev;
-  AnsiString S;
+    WideString str = "BY CALID   ";
+     if(HidDev->ProductName == str) {
+         CurrentDevice = HidDev;
+         Application->MessageBoxA("您已连接BY CALID HID USB","提示",MB_OK);
+     } else {
+       CurrentDevice = NULL;
+     }
+ return(true);
 
-  if(DevListBox != NULL)
-  {
-    if(HidDev->ProductName != NULL)
-      N = DevListBox->Items->Add(HidDev->ProductName);
-    else
-      N = DevListBox->Items->Add(S.sprintf("Device VID=%04X PID=%04X",
-        HidDev->Attributes.VendorID, HidDev->Attributes.ProductID));
-    JvHidDeviceController1->CheckOutByIndex(Dev, Idx);
-    DevListBox->Items->Objects[N] = Dev;
-  }
-  return(true);
 }
 //---------------------------------------------------------------------------
 
 
 void __fastcall TForm1::JvHidDeviceController1DeviceChange(TObject *Sender)
 {
-     int I;
-  TJvHidDevice *Dev;
-
-  ReadBtn->Down = false;
-  ReadBtnClick(this);
-  if(DevListBox != NULL)
-  {
-    for(I = 0; I < DevListBox->Count; I++)
-    {
-      Dev = (TJvHidDevice *) DevListBox->Items->Objects[I];
-      Dev->Free();
-    }
-    DevListBox->Clear();
-    HistoryListBox->Clear();
-    JvHidDeviceController1->Enumerate();
-    if(DevListBox->Items->Count > 0)
-    {
-      DevListBox->ItemIndex = 0;
-      DevListBoxClick(this);
-    }
-  }
-
+       CurrentDevice = NULL;
+       JvHidDeviceController1->Enumerate();
 
 }
 //---------------------------------------------------------------------------
@@ -3368,80 +3325,12 @@ void __fastcall TForm1::JvHidDeviceController1DeviceChange(TObject *Sender)
 void __fastcall TForm1::HidCtlDeviceDataError(TJvHidDevice *HidDev,
       DWORD Error)
 {
-    HistoryListBox->ItemIndex = HistoryListBox->Items->Add("READ ERROR: " + SysErrorMessage(Error));
+  AnsiString str;
+   str = "READ ERROR: " + SysErrorMessage(Error);
+   const char* nodename = str.c_str();       //string  转换 cont char* 类型  (c.str())
+   Application->MessageBoxA(nodename,"问题",MB_OK);
 }
 //---------------------------------------------------------------------------
-
-void __fastcall TForm1::DevListBoxClick(TObject *Sender)
-{
-  int I;
-  TJvHidDevice *Dev;
-  ReadBtn->Down = false;
-  ReadBtnClick(this);
-  HistoryListBox->Clear();
-  if(Edits[0] != NULL &&
-    DevListBox->Items->Count > 0 && DevListBox->ItemIndex >= 0)
-  {
-    Dev = (TJvHidDevice *) DevListBox->Items->Objects[DevListBox->ItemIndex];
-    for(I = 0; I < 64; I++)
-      Edits[I]->Visible = false;
-    for(I = 0; I < Dev->Caps.OutputReportByteLength - 1; I++)
-      Edits[I]->Visible = true;
-    WriteBtn->Enabled = Dev->Caps.OutputReportByteLength != 0;
-  }
-}
-//---------------------------------------------------------------------------
-
-
-void __fastcall TForm1::ReadBtnClick(TObject *Sender)
-{
- if(CurrentDevice != NULL)
-     CurrentDevice->OnData = NULL;
-  CurrentDevice = NULL;
-  if(DevListBox->Items->Count > 0 && DevListBox->ItemIndex >= 0)
-  {
-    CurrentDevice = (TJvHidDevice *) DevListBox->Items->Objects[DevListBox->ItemIndex];
-    if(ReadBtn->Down && CurrentDevice->HasReadWriteAccess)
-      CurrentDevice->OnData = ShowRead;
-    else
-    {
-      CurrentDevice->OnData = NULL;
-      ReadBtn->Down = false;
-    }
-  }
-}
-//---------------------------------------------------------------------------
-void __fastcall TForm1::WriteBtnClick(TObject *Sender)
-{
-   AnsiString S,Str;
-   unsigned char Buf[65],BUFF[65];
-   unsigned int ToWrite,Written;
-   unsigned char newData[8]={0x00,0xaa,0x01,0x01,0x01,0x01,0x01,0xFF};
-   unsigned char value;
-   int I;
-   newData[6] = StrToIntDef("$" + Edit2->Text, 0);
-    if(CurrentDevice != NULL)
-  {
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++) {
-      if (I < 8){
-        Buf[I] = StrToIntDef(newData[I], 0);
-      } else {
-         Buf[I] = 0xFF;
-      }
-     }
-     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-     CurrentDevice->ReadFile(BUFF, ToWrite, Written);    //读取
-    }
-    if(BUFF[7] != 0x00){
-       Application->MessageBoxA("读取数据发送返回失败!!","问题",MB_OK);
-    } else {
-     Str.sprintf("R %02X  ", Buf[0]);
-     for(I = 1; I < Written; I++)
-      Str += S.sprintf("%02X ", BUFF[I]);
-     HistoryListBox->ItemIndex = HistoryListBox->Items->Add(Str);
-   }
-}
 /////////////////////////////////////////////////////////////////////////
 extern "C" BOOL pascal qfkqyn(void) ///读取判断发卡器与软件是否一致    007
 {
@@ -23382,7 +23271,6 @@ char __fastcall TForm1::DataWrite(unsigned char data1[],AnsiString data2)
   unsigned char number[65],newData2[28];
   unsigned int Written;
   unsigned int ToWrite;
-  AnsiString Str;
   AnsiString S;
   char *ChArr;
   unsigned char aa;
@@ -23413,7 +23301,7 @@ char __fastcall TForm1::DataWrite(unsigned char data1[],AnsiString data2)
 
   if(CurrentDevice != NULL)
   {
-    Buf[0] = StrToIntDef("$" + ReportID->Text, 0);
+    Buf[0] = 0x00;
     ToWrite = CurrentDevice->Caps.OutputReportByteLength;
     for(I = 1; I < ToWrite; I++)
     {
@@ -23425,23 +23313,7 @@ char __fastcall TForm1::DataWrite(unsigned char data1[],AnsiString data2)
     }
     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
     CurrentDevice->ReadFile(BUFF, ToWrite, Written);    //读取
-     /*
-     I = 5;
-     while (BUFF[1] != 0xBB){
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   // 读
-      I--;
-      if (I < 1){
-         BUFF[1] = 0xBB;
-      }
-    }
-    */
     aa = BUFF[7];
-    Str.sprintf("W %02X  ", Buf[0]);
-    if (I > -30){
-     for(I = 1; I < Written; I++)
-       Str += S.sprintf("%02X ", Buf[I]);
-       HistoryListBox->ItemIndex = HistoryListBox->Items->Add(Str);
-     }
     }
     return aa;
 }
@@ -23587,6 +23459,10 @@ char __fastcall TForm1::judgeFunction(unsigned char add[],int acc) {
   }
   return add1;
 }
+
+
+
+
 
 
 
