@@ -3301,10 +3301,12 @@ if (!USB_DevClose()) {
 bool __fastcall TForm1::JvHidDeviceController1Enumerate(
       TJvHidDevice *HidDev, const int Idx)
 {
+   TJvHidDevice *Dev;
     WideString str = "BY CALID   ";
      if(HidDev->ProductName == str) {
          CurrentDevice = HidDev;
-         Application->MessageBoxA("您已连接BY CALID HID USB","提示",MB_OK);
+         JvHidDeviceController1->CheckOutByIndex(Dev, Idx);
+         Application->MessageBoxA("您已连接BY CALID HID_USB","提示",MB_OK);
      } else {
        CurrentDevice = NULL;
      }
