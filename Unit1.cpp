@@ -3301,14 +3301,24 @@ if (!USB_DevClose()) {
 bool __fastcall TForm1::JvHidDeviceController1Enumerate(
       TJvHidDevice *HidDev, const int Idx)
 {
+
+    int N;
+  AnsiString S,STR;
+
    TJvHidDevice *Dev;
-    WideString str = "BY CALID   ";
+   WideString str = "BY CALID   ";
+   AnsiString str2 = "Device VID=0483 PID=5750";
+    STR = S.sprintf("Device VID=%04X PID=%04X",
+        HidDev->Attributes.VendorID, HidDev->Attributes.ProductID);
      if(HidDev->ProductName == str) {
-         CurrentDevice = HidDev;
-         JvHidDeviceController1->CheckOutByIndex(Dev, Idx);
-         Application->MessageBoxA("您已连接BY CALID HID_USB","提示",MB_OK);
+       CurrentDevice = HidDev;
+       JvHidDeviceController1->CheckOutByIndex(Dev, Idx);    //检测每次通讯的字节数量
+       Application->MessageBoxA("您已连接BY CALID HID_USB","提示",MB_OK);
      } else {
-       CurrentDevice = NULL;
+      CurrentDevice = NULL;
+        if (STR == str2 ) {
+          Application->MessageBoxA("您连接BY CALID HID_USB 有异常,请重新插入!","提示",MB_OK);
+         }
      }
  return(true);
 
@@ -12107,7 +12117,7 @@ else
    char value;
    char *value2;
    AnsiString a1,a2;
-  unsigned int I,s1;
+  unsigned int I,s1,faka = 0;
   Form7->Memo1->Clear();
     ToWrite = CurrentDevice->Caps.OutputReportByteLength;
     for(I = 0; I < ToWrite; I++) {
@@ -12124,8 +12134,7 @@ else
 
       if(BUFF[7]==0x00){
       Caption = "寻卡成功";
-       s1 =  bianhaoAction (BUFF[11],BUFF[12]);
-      a1 =IntToStr(s1);
+       a1 =  bianhaoAction (BUFF[11],BUFF[12]);
        Form7->Memo1->Lines->Add("编号: "+a1+"\n");
        Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
        for(I = 8; I < 11;I++){
@@ -12136,8 +12145,18 @@ else
          s1 = (int)(value);
         a2 = a2+IntToStr(s1);
        }
+       if (a2 =="151515151515")
+        faka = 1;
        Form7->Memo1->Lines->Add("有效期: "+a2+'\n');
        Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+       if (BUFF[13] == 0x00){
+          Form7->Memo1->Lines->Add("提示:此卡不参与有效期!");
+          Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+       } else {
+          Form7->Memo1->Lines->Add("提示:此卡参与有效期!");
+         Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+       }
+
        Buf[6]=0x02;
        CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
        CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
@@ -12187,13 +12206,20 @@ else
           Form7->Memo1->Lines->Add(a2+'\n');
          }
        }
-       Form7->sButton1->Visible = true;
+     //  Form7->sButton1->Visible = true;
+       if (faka == 1){
+       Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
+       }else{
        Form7->ShowModal();  // Form7 调用显示模式
-                }else{Application->MessageBoxA("读取地址3返回失败!!","问题",MB_OK);}
-              }else{Application->MessageBoxA("读取地址2返回失败!!","问题",MB_OK);}
-           }else{Application->MessageBoxA("读取地址1返回失败!!","问题",MB_OK);}
-         }else{Application->MessageBoxA("读取层数返回失败!!","问题",MB_OK);}
-      }else { Application->MessageBoxA("读取用户返回失败!!","问题",MB_OK); }
+       }
+                }else{Application->MessageBoxA("读取地址3返回超时!!","问题",MB_OK);}
+              }else{Application->MessageBoxA("读取地址2返回超时!!","问题",MB_OK);}
+           }else{Application->MessageBoxA("读取地址1返回超时!!","问题",MB_OK);}
+         }else{
+       if (faka == 1){
+       Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
+       }else{Application->MessageBoxA("读取层数返回超时!!","问题",MB_OK);}}
+      }else { Application->MessageBoxA("读取用户返回超时!!","问题",MB_OK); }
      sButton17->Enabled=true; //读卡开
     }    //  USB  选择结尾括号
 }
@@ -13036,7 +13062,7 @@ sButton16->Enabled=true; //
 
      if (write14data0s(Temp)){
       bool result = USB_BeepExA(3);
-      Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
+      Application->MessageBoxA("写卡成功 !!","恭喜",MB_OK);
       }
 
 
@@ -13052,8 +13078,8 @@ FrmBar->PBarClose();
     erase(0x02); // 擦除
     Temp="ABC002"+st1+st2+st3+st6+st4+st5+second;
     returnSign = DataWrite(newData1,Temp);
-     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
-               else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
+               else{ Application->MessageBoxA("写卡成功 !!","恭喜",MB_OK);}
     
  }
 }
@@ -14266,7 +14292,7 @@ if(!write13addrwz(Temp)){
    }
   }  else {
     erase(0x02); // 擦除
-    Temp=EndTime+UserCID;   //数据再赋值,不要加密
+    Temp=EndTime+UserCID+"0"+yxqyn;   //数据再赋值,不要加密
     returnSign = DataWrite(newData1,Temp);
     if (returnSign ==0x00){
     Temp1=selectin+"0"+jbusyn;  //数据再赋值,不要加密
@@ -14284,12 +14310,12 @@ if(!write13addrwz(Temp)){
             TempStree1=elevatoraddr.SubString(65,32);
             newData1[5]=0x05;
             returnSign = DataWrite(newData1,TempStree1);
-            if (returnSign != 0x00){Application->MessageBoxA("第五组数据发送返回失败!!","问题",MB_OK);}
+            if (returnSign != 0x00){Application->MessageBoxA("第五组数据发送返回超时!!","问题",MB_OK);}
                else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
-            } else {Application->MessageBoxA("第四组数据发送返回失败!!","问题",MB_OK);}
-         } else {Application->MessageBoxA("第三组数据发送返回失败!!","问题",MB_OK);}
-      } else {Application->MessageBoxA("第二组数据发送返回失败!!","问题",MB_OK);}
-   } else {Application->MessageBoxA("第一组数据发送返回失败!!","问题",MB_OK);}
+            } else {Application->MessageBoxA("第四组数据发送返回超时!!","问题",MB_OK);}
+         } else {Application->MessageBoxA("第三组数据发送返回超时!!","问题",MB_OK);}
+      } else {Application->MessageBoxA("第二组数据发送返回超时!!","问题",MB_OK);}
+   } else {Application->MessageBoxA("第一组数据发送返回超时!!","问题",MB_OK);}
   }
 
    if(number == 1 )
@@ -17955,7 +17981,7 @@ FrmBar->PBarClose();
      Temp=userCID123+conpwd;
     data = "ABC011"+Temp;
     returnSign = DataWrite(newData1,data);
-     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
                else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
     }
 }
@@ -23319,32 +23345,6 @@ char __fastcall TForm1::DataWrite(unsigned char data1[],AnsiString data2)
     }
     return aa;
 }
-//-------------------带返回的  读取数据---------
-char __fastcall TForm1::ReadData(char address) {
-   unsigned char Buf[65],BUFF[65];
-   unsigned int ToWrite,Written;
-   unsigned char newData[8]={0x00,0xaa,0x01,0x01,0x01,0x01,0x01,0xFF};
-   unsigned char value;
-   int I;
-   newData[6] = address;
-    if(CurrentDevice != NULL)
-  {
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++)
-    {
-      if (I < 8){
-        Buf[I] = StrToIntDef(newData[I], 0);
-      } else {
-         Buf[I] = 0xFF;
-      }
-     }
-     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-     CurrentDevice->ReadFile(BUFF, ToWrite, Written);    //读取
-     value = BUFF[7];
-    }
-    return value;
-}
-
 
 //-------------------擦除数据  擦除 01为全擦 02为只擦数据 ---------
 void __fastcall TForm1::erase(char number){
@@ -23366,7 +23366,7 @@ void __fastcall TForm1::erase(char number){
      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   // 读
      if (BUFF[7] != 0x00)
-        Application->MessageBoxA("擦除返回失败!!","问题",MB_OK);
+        Application->MessageBoxA("擦除返回超时!!","问题",MB_OK);
     }
 }
 
@@ -23400,38 +23400,12 @@ char __fastcall TForm1::asciiChange(char sec){
      return number;
 }
 ///////////数组转换成字符串 编码
-int __fastcall TForm1::bianhaoAction (char add1,char add2){
-   int number,number2;
-     switch(add1){
-       case 0x00:
-          number = 0;
-          break;
-       case 0x01:
-           number = 4;
-            break;
-       case 0x10:
-            number = 8;
-            break;
-        default:
-             number = 12;
-       break;
-      }
-      switch(add2){
-       case 0x00:
-          number2 = 0;
-          break;
-       case 0x01:
-           number2 = 1;
-            break;
-       case 0x10:
-            number2 = 2;
-            break;
-        default:
-             number2 = 3;
-       break;
-      }
-      number = number +number2;
-  return number;
+String __fastcall TForm1::bianhaoAction (unsigned char add1,unsigned char add2){
+
+  String qstr, s2;
+  int s1 = (int)(add1) * 272 + (int)(add2);
+  s2 = s2 + IntToStr(s1);
+  return s2;
 }
 
  //判断字节 第十六位是否为1
@@ -23463,9 +23437,7 @@ char __fastcall TForm1::judgeFunction(unsigned char add[],int acc) {
 }
 
 
-
-
-
+//---------------------------------------------------------------------------
 
 
 

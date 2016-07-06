@@ -337,7 +337,7 @@ ins="select * from userinfo where jijiangguashi='1' ";
     Form1->erase(0x02); // 擦除
     data1 = "ABC003" + data2;
     returnSign = Form1->DataWrite(newData1,data1);
-     if (returnSign != 0x00){Application->MessageBoxA("数据发送返回失败!!","问题",MB_OK);}
+     if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
                else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
   }
 sButton2->Enabled=true; //

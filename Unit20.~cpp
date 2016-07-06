@@ -334,9 +334,9 @@ ins="select * from userinfo where jijiangguashi='1' ";
          Caption = "¹Ø±Õ´®¿ÚÊ§°Ü";
   } else {      // HID USB
    data2=UserCID.SubString(1,24);
-    erase(0x02); // ²Á³ý
+    Form1->erase(0x02); // ²Á³ý
     data1 = "ABC003" + data2;
-    returnSign = DataWrite(newData1,data1);
+    returnSign = Form1->DataWrite(newData1,data1);
      if (returnSign != 0x00){Application->MessageBoxA("Êý¾Ý·¢ËÍ·µ»ØÊ§°Ü!!","ÎÊÌâ",MB_OK);}
                else{ Application->MessageBoxA("Ð´¿¨³É¹¦£¡!!","¹§Ï²",MB_OK);}
   }

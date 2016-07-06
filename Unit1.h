@@ -670,7 +670,7 @@ public:		// User declarations
        void __fastcall erase(char number);
        char __fastcall ReadData(char address);
        char __fastcall judgeFunction(unsigned char add[],int acc);
-       int __fastcall bianhaoAction (char add1,char add2);
+       String __fastcall bianhaoAction (unsigned char add1,unsigned char add2);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
