@@ -667,10 +667,12 @@ public:		// User declarations
               BYTE ReportID, const void *Data, WORD Size);
        char __fastcall DataWrite(unsigned char data1[],AnsiString data2);
        char __fastcall asciiChange(char sec);
-       void __fastcall erase(char number);
+       char __fastcall erase(char number,char number2);
        char __fastcall ReadData(char address);
        char __fastcall judgeFunction(unsigned char add[],int acc);
        String __fastcall bianhaoAction (unsigned char add1,unsigned char add2);
+       String __fastcall zhuanhuanAction (unsigned char add[]);
+       String __fastcall ZHAction (unsigned int add);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

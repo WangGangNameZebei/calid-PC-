@@ -30,12 +30,12 @@ object Form1: TForm1
     Top = 0
     Width = 1015
     Height = 705
-    ActivePage = sTabSheet1
+    ActivePage = sTabSheet3
     Align = alClient
     HotTrack = True
     MultiLine = True
     TabHeight = 30
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     TabWidth = 250
     OnChange = sPageControl1Change
@@ -2378,7 +2378,7 @@ object Form1: TForm1
             SkinData.SkinSection = 'GROUPBOX'
             object sButton19: TsButton
               Left = 32
-              Top = 24
+              Top = 32
               Width = 75
               Height = 25
               Caption = #20462#25913#23494#30721
