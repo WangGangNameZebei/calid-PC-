@@ -12115,6 +12115,7 @@ else
    unsigned int ToWrite,Written;
    unsigned char newData[8]={0x00,0xaa,0x01,0x01,0x01,0x01,0x01,0xFF};
    char value;
+   char Data[4] = {0};
    char *value2;
    AnsiString a1,a2;
   unsigned int I,s1,faka = 0;
@@ -12132,6 +12133,44 @@ else
 
       if(BUFF[7]==0x00){
       Caption = "寻卡成功";
+      if(BUFF[8] == 0xAB && BUFF[9] == 0xC0 && BUFF[10] == 0x02){  //此卡 为时间卡片
+       for(I = 11;I < 18;I++){
+       value = BUFF[I] /16;
+        s1 = (int)(value);
+        a2 = a2+IntToStr(s1);
+        value = BUFF[I] % 16;
+         s1 = (int)(value);
+        a2 = a2+IntToStr(s1);
+       }
+         Form7->Memo1->Lines->Add("提示:此卡为时间卡!");
+         a1 = "20" + a2.SubString(1,2) + "年" +  a2.SubString(3,2) + "月" + a2.SubString(5,2)+ "日" + a2.SubString(7,2)+"周" + a2.SubString(9,2) + "时" + a2.SubString(11,2) + "分" + a2.SubString(13,2) + "秒";
+         Form7->Memo1->Lines->Add("日期为: "+a1+'\n');
+         Form7->ShowModal();  // Form7 调用显示模式
+      } else if (BUFF[8] == 0xAB && BUFF[9] == 0xC0 && (BUFF[10] == 0x03 ||BUFF[10] == 0x05)){ ///此卡 为挂失卡
+          if (BUFF[10] == 0x05){
+            Form7->Memo1->Lines->Add("提示:此卡为解挂卡!");
+          }else{
+            Form7->Memo1->Lines->Add("提示:此卡为挂失卡!");
+          }
+          Form7->Memo1->Lines->Add("编号为:" );
+        for(I = 11;I < 23;I++){
+        value = BUFF[I] /16;
+        s1 = (int)(value);
+        itoa(s1,Data,16);
+         a1 = String(Data);
+         value = BUFF[I] % 16;
+         s1 = (int)(value);
+         itoa(s1,Data,16);
+         a2 = a2 + a1 + String(Data);
+         if(I % 2  == 0x00){        // 每两个数据一显示
+            Form7->Memo1->Lines->Add(a2);
+            a2="";
+           }
+        }
+
+
+         Form7->ShowModal();  // Form7 调用显示模式
+      }else{
        a1 =  bianhaoAction (BUFF[11],BUFF[12]);
        Form7->Memo1->Lines->Add("编号: "+a1+"\n");
        Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
@@ -12143,7 +12182,7 @@ else
          s1 = (int)(value);
         a2 = a2+IntToStr(s1);
        }
-       if (a2 =="151515151515" ||(BUFF[8] == 0xAB && BUFF[9] == 0xC0 && BUFF[10] == 0x11) )
+       if (a2 =="151515151515" )
         faka = 1;
        Form7->Memo1->Lines->Add("有效期: "+a2+'\n');
        Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
@@ -12217,7 +12256,8 @@ else
        if (faka == 1){
        Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
        }else{Application->MessageBoxA("读取层数返回超时!!","问题",MB_OK);}}
-      }else { Application->MessageBoxA("读取用户返回超时!!","问题",MB_OK); }
+        } //时间卡 挂失卡 判断括号
+      }else { Application->MessageBoxA("读取用户返回超时!!","问题",MB_OK);}
      sButton17->Enabled=true; //读卡开
     }    //  USB  选择结尾括号
 }

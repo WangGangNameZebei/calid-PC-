@@ -334,7 +334,7 @@ ins="select * from userinfo where jijiangguashi='1' ";
          Caption = "关闭串口失败";
   } else {      // HID USB
    data2=UserCID.SubString(1,24);
-    Form1->erase(0x02); // 擦除
+    Form1->erase(0x02,0x03); // 擦除
     data1 = "ABC003" + data2;
     returnSign = Form1->DataWrite(newData1,data1);
      if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
