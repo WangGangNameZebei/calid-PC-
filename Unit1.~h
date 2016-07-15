@@ -433,6 +433,8 @@ __published:	// IDE-managed Components
         TsCheckBox *sCheckBox35;
         TMenuItem *N30;
         TJvHidDeviceController *JvHidDeviceController1;
+        TsGroupBox *sGroupBox28;
+        TsButton *sButton82;
         void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall FormDestroy(TObject *Sender);
@@ -663,16 +665,14 @@ public:		// User declarations
 
         TJvHidDevice *CurrentDevice;
         __fastcall TForm1(TComponent* Owner);
-        void __fastcall ShowRead(TJvHidDevice *HidDev,
-              BYTE ReportID, const void *Data, WORD Size);
        char __fastcall DataWrite(unsigned char data1[],AnsiString data2);
        char __fastcall asciiChange(char sec);
        char __fastcall erase(char number,char number2);
        char __fastcall ReadData(char address);
-       char __fastcall judgeFunction(unsigned char add[],int acc);
        String __fastcall bianhaoAction (unsigned char add1,unsigned char add2);
        String __fastcall zhuanhuanAction (unsigned char add[]);
        String __fastcall ZHAction (unsigned int add);
+       void __fastcall HIDUSBchushihua();
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

@@ -32,6 +32,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         try
         {
                  Application->Initialize();
+                 Application->Title = "电梯门禁控制管理软件V530.133.10";
                  Application->CreateForm(__classid(TForm3), &Form3);
                  Application->CreateForm(__classid(Ttcon), &tcon);
                  Application->CreateForm(__classid(TForm1), &Form1);

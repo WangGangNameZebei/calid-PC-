@@ -3301,9 +3301,8 @@ if (!USB_DevClose()) {
 bool __fastcall TForm1::JvHidDeviceController1Enumerate(
       TJvHidDevice *HidDev, const int Idx)
 {
-
     int N;
-  AnsiString S,STR;
+   AnsiString S,STR;
 
    TJvHidDevice *Dev;
    WideString str = "BY CALID   ";
@@ -3313,12 +3312,7 @@ bool __fastcall TForm1::JvHidDeviceController1Enumerate(
      if(HidDev->ProductName == str) {
        CurrentDevice = HidDev;
        JvHidDeviceController1->CheckOutByIndex(Dev, Idx);    //检测每次通讯的字节数量
-       Application->MessageBoxA("您已连接BY CALID HID_USB","提示",MB_OK);
-     } else {
-      CurrentDevice = NULL;
-        if (STR == str2 ) {
-          Application->MessageBoxA("您连接BY CALID HID_USB 有异常,请重新插入!","提示",MB_OK);
-         }
+       Form1->Caption = "您已连接BY CALID HID_USB!!";
      }
  return(true);
 
@@ -3330,7 +3324,25 @@ void __fastcall TForm1::JvHidDeviceController1DeviceChange(TObject *Sender)
 {
        CurrentDevice = NULL;
        JvHidDeviceController1->Enumerate();
-
+       if (CurrentDevice == NULL)  {
+       cn1="0";  //电梯设置卡
+       sButton18->Enabled=false; //电梯设置卡
+       cn2="0";  //时间卡
+       sButton16->Enabled = false;    //时间卡
+       cn3="0";  //修改电梯密码
+       sButton19->Enabled = false;  //修改电梯密码
+       sButton20->Enabled = false;  //同步卡
+       sButton25->Enabled = false;  //同步卡
+       cn4="0";  //挂失卡
+       sButton23->Enabled = false;   //挂失卡
+       cn6="0";  //用户发卡
+       sButton26->Enabled = false;  //用户发卡
+       cn9="0";//恢复所有挂失
+       sButton30->Enabled = false;  //恢复所有挂失
+       cn10="0";     //开放电梯
+       sButton13->Enabled = false;   //开放电梯
+       sButton39->Enabled = false;   //开放设置
+       }
 }
 //---------------------------------------------------------------------------
 
@@ -3350,10 +3362,6 @@ extern "C" BOOL pascal qfkqyn(void) ///读取判断发卡器与软件是否一致    007
 
 String fkqid,fkqsector,sscid;
 
-
-
-  return TRUE;  // 查找插件USB
-
 /*
 String scom=Form1->ComboBox1->Text;
        if(scom=="")
@@ -3365,6 +3373,8 @@ bool reresult = USB_DevInit(StrToInt(scom));
         return FALSE;
         }
      */
+
+ if (Form1->CurrentDevice == NULL){
 char Data[32] = {0};
  //  bool result = USB_Anticoll(Data);
    bool result = USB_Read(16, 0,Data);
@@ -3385,6 +3395,7 @@ char Data[32] = {0};
           }
            else
            {
+
               result = USB_Read(16, 0,Data);
               if (result)
                {
@@ -3393,10 +3404,11 @@ char Data[32] = {0};
      //  sEdit3->Text=fkqid;
                }
                else{
-               if(tishiyn==1) //是否出到提示，1为是
-                   Application->MessageBoxA("没有检测到发卡器!!","问题",MB_OK);
-               return FALSE;
+                if(tishiyn==1) //是否出到提示，1为是
+                // Application->MessageBoxA("没有检测到发卡器!!","问题",MB_OK);
+                return FALSE;
                }
+               
            }
     }
 
@@ -3441,6 +3453,9 @@ char Data[32] = {0};
       return FALSE;
      }
     }
+   } else {
+    return TRUE;  // 查找插件USB
+   }
 }
 /////////////////////////////////////////////////////////////////////////////////
 extern "C" BOOL pascal fkqyn(void) ///读取判断发卡器与软件是否一致
@@ -9814,10 +9829,9 @@ void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
 
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
-      if(CurrentDevice != NULL)
-  {
-        int abc;
-  } else{
+    JvHidDeviceController1->DeviceChange();
+    HIDUSBchushihua();
+
 
 String ins,no,nos,elevatorname,addr,note,syear,inc,bindcardyn,lockcomm,yxqyn;
 String keydelay,subbcountyn,floorname,floorno,sdate,month,day,sector,floorlock,scom;
@@ -10633,7 +10647,6 @@ ListView2->Visible=true;
 {
 sButton5->Visible=false;
 ListView2->Visible=false;
-}
 }
 }
 //---------------------------------------------------------------------------
@@ -12111,54 +12124,56 @@ else
    */
  /////////////////////UID USB读取卡-----------
    } else {
-   unsigned char Buf[65],BUFF[65];
-   unsigned int ToWrite,Written;
-   unsigned char newData[8]={0x00,0xaa,0x01,0x01,0x01,0x01,0x01,0xFF};
-   char value;
-   char Data[4] = {0};
-   char *value2;
-   AnsiString a1,a2;
-  unsigned int I,s1,faka = 0;
-  Form7->Memo1->Clear();
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++) {
-      if (I < 8){
-        Buf[I] = StrToIntDef(newData[I], 0);
-      } else {
-         Buf[I] = 0xFF;
-      }
-     }
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-
-      if(BUFF[7]==0x00){
-      Caption = "寻卡成功";
-      if(BUFF[8] == 0xAB && BUFF[9] == 0xC0 && BUFF[10] == 0x02){  //此卡 为时间卡片
-       for(I = 11;I < 18;I++){
-       value = BUFF[I] /16;
-        s1 = (int)(value);
-        a2 = a2+IntToStr(s1);
-        value = BUFF[I] % 16;
-         s1 = (int)(value);
-        a2 = a2+IntToStr(s1);
+     unsigned char Buf[65],BUFF[65];
+     unsigned int ToWrite,Written;
+     unsigned char newData[8]={0x00,0xaa,0x01,0x01,0x01,0x01,0x01,0xFF};
+     char value;
+     char Data[4] = {0};
+     char *value2;
+     AnsiString a1,a2,numberOne,numberTow;
+     unsigned int I,s1,faka = 0;
+     Form7->Memo1->Clear();
+     ToWrite = CurrentDevice->Caps.OutputReportByteLength;  //获取 HID  USB  数据传送字节数量
+     for(I = 0; I < ToWrite; I++) {
+        if (I < 8){
+          Buf[I] = StrToIntDef(newData[I], 0);
+        } else {
+           Buf[I] = 0xFF;
+        }
        }
+     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+     CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+
+     if(BUFF[7]==0x00){                      //读取用户判断
+       Caption = "寻卡成功";
+       if(BUFF[8] == 0xAB && BUFF[9] == 0xC0 && BUFF[10] == 0x02){  //此卡 为时间卡片
+          for(I = 11;I < 18;I++){
+           value = BUFF[I] /16;
+           s1 = (int)(value);
+           a2 = a2+IntToStr(s1);
+           value = BUFF[I] % 16;
+           s1 = (int)(value);
+           a2 = a2+IntToStr(s1);
+         }
          Form7->Memo1->Lines->Add("提示:此卡为时间卡!");
          a1 = "20" + a2.SubString(1,2) + "年" +  a2.SubString(3,2) + "月" + a2.SubString(5,2)+ "日" + a2.SubString(7,2)+"周" + a2.SubString(9,2) + "时" + a2.SubString(11,2) + "分" + a2.SubString(13,2) + "秒";
          Form7->Memo1->Lines->Add("日期为: "+a1+'\n');
          Form7->ShowModal();  // Form7 调用显示模式
-      } else if (BUFF[8] == 0xAB && BUFF[9] == 0xC0 && (BUFF[10] == 0x03 ||BUFF[10] == 0x05)){ ///此卡 为挂失卡
-          if (BUFF[10] == 0x05){
-            Form7->Memo1->Lines->Add("提示:此卡为解挂卡!");
-          }else{
-            Form7->Memo1->Lines->Add("提示:此卡为挂失卡!");
-          }
-          Form7->Memo1->Lines->Add("编号为:" );
-        for(I = 11;I < 23;I++){
-        value = BUFF[I] /16;
-        s1 = (int)(value);
-        itoa(s1,Data,16);
-         a1 = String(Data);
-         value = BUFF[I] % 16;
+       }else if (BUFF[8] == 0xAB && BUFF[9] == 0xC0 && BUFF[10] == 0x04) {                   //此卡为清空挂失卡
+         Application->MessageBoxA("此卡为清空挂失卡!!","提示",MB_OK);
+       } else if (BUFF[8] == 0xAB && BUFF[9] == 0xC0 && (BUFF[10] == 0x03 ||BUFF[10] == 0x05)){     //此卡 为挂失卡
+         if (BUFF[10] == 0x05){
+           Form7->Memo1->Lines->Add("提示:此卡为解挂卡!");
+         }else{
+           Form7->Memo1->Lines->Add("提示:此卡为挂失卡!");
+         }
+         Form7->Memo1->Lines->Add("编号为:" );
+         for(I = 11;I < 23;I++){
+           value = BUFF[I] /16;
+           s1 = (int)(value);
+           itoa(s1,Data,16);
+           a1 = String(Data);
+           value = BUFF[I] % 16;
          s1 = (int)(value);
          itoa(s1,Data,16);
          a2 = a2 + a1 + String(Data);
@@ -12166,100 +12181,113 @@ else
             Form7->Memo1->Lines->Add(a2);
             a2="";
            }
-        }
-
-
+         }
          Form7->ShowModal();  // Form7 调用显示模式
-      }else{
-       a1 =  bianhaoAction (BUFF[11],BUFF[12]);
-       Form7->Memo1->Lines->Add("编号: "+a1+"\n");
-       Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
-       for(I = 8; I < 11;I++){
-        value = BUFF[I] /16;
-        s1 = (int)(value);
-        a2 = a2+IntToStr(s1);
-        value = BUFF[I] % 16;
-         s1 = (int)(value);
-        a2 = a2+IntToStr(s1);
-       }
-       if (a2 =="151515151515" )
-        faka = 1;
-       Form7->Memo1->Lines->Add("有效期: "+a2+'\n');
-       Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
-       if (BUFF[13] == 0x00){
-          Form7->Memo1->Lines->Add("提示:此卡不参与有效期!");
-          Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
-       } else {
-          Form7->Memo1->Lines->Add("提示:此卡参与有效期!");
-         Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
-       }
-
-       Buf[6]=0x02;
-       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-        if(BUFF[7]==0x00){
-        Form7->Memo1->Lines->Add("可进入的电梯的层数为: ");
-        if (BUFF[16]==0x01)
-          Form7->Memo1->Lines->Add("-1层 ");
-       for(int str1 = 65;str1 < 129;str1++){
-        char str2 = judgeFunction(BUFF,str1);
-        if (str2 == 0x01){
-         a2 =IntToStr(str1 - 64);
-          Form7->Memo1->Lines->Add(a2+"层; "+'\n');
-         }
-       }
-        Buf[6]=0x03;
-       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-        if(BUFF[7]==0x00){
-        Form7->Memo1->Lines->Add("可进入的设备地址为: ");
-       for(int str1 = 65;str1 < 193;str1++){
-        char str2 = judgeFunction(BUFF,str1);
-        if (str2 == 0x01){
-         a2 =IntToStr(str1 - 64);
-          Form7->Memo1->Lines->Add(a2+'\n');
-         }
-       }
-       Buf[6]=0x04;
-       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-         if(BUFF[7]==0x00){
-       for(int str1 = 65;str1 < 193;str1++){
-        char str2 = judgeFunction(BUFF,str1);
-        if (str2 == 0x01){
-         a2 =IntToStr(str1 - 64 + 128);
-          Form7->Memo1->Lines->Add(a2+'\n');
-         }
-       }
-
-         Buf[6]=0x05;
-       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-        if(BUFF[7]==0x00){
-       for(int str1 = 65;str1 < 193;str1++){
-        char str2 = judgeFunction(BUFF,str1);
-        if (str2 == 0x01){
-         a2 =IntToStr(str1 - 64 + 128 * 2);
-          Form7->Memo1->Lines->Add(a2+'\n');
-         }
-       }
-     //  Form7->sButton1->Visible = true;
-       if (faka == 1){
-       Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
        }else{
-       Form7->ShowModal();  // Form7 调用显示模式
-       }
-                }else{Application->MessageBoxA("读取地址3返回超时!!","问题",MB_OK);}
-              }else{Application->MessageBoxA("读取地址2返回超时!!","问题",MB_OK);}
-           }else{Application->MessageBoxA("读取地址1返回超时!!","问题",MB_OK);}
-         }else{
-       if (faka == 1){
-       Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
-       }else{Application->MessageBoxA("读取层数返回超时!!","问题",MB_OK);}}
-        } //时间卡 挂失卡 判断括号
-      }else { Application->MessageBoxA("读取用户返回超时!!","问题",MB_OK);}
-     sButton17->Enabled=true; //读卡开
-    }    //  USB  选择结尾括号
+         a1 =  bianhaoAction (BUFF[11],BUFF[12]);
+         Form7->Memo1->Lines->Add("编号: "+a1+"\n");
+         Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+         for(I = 8; I < 11;I++){
+           value = BUFF[I] /16;
+           s1 = (int)(value);
+           a2 = a2+IntToStr(s1);
+           value = BUFF[I] % 16;
+           s1 = (int)(value);
+           a2 = a2+IntToStr(s1);
+         }
+         if (a2 =="151515151515" )                 //根据日期 判断是否是未发的卡
+            faka = 1;
+            Form7->Memo1->Lines->Add("有效期: "+a2+'\n');
+            Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+            if (BUFF[13] == 0x00){
+               Form7->Memo1->Lines->Add("提示:此卡不参与有效期!");
+               Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+            } else {
+               Form7->Memo1->Lines->Add("提示:此卡参与有效期!");
+               Form7->Memo1->Lines->Add("-------------------------------------------------------------------------------------------------------------");
+            }
+            Buf[6]=0x02;
+            CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+            CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+
+
+
+            if(BUFF[7]==0x00){          //  读取层数判断
+               Form7->Memo1->Lines->Add("可进入的电梯的层数为: ");
+                  if (BUFF[16]==0x01)
+                   Form7->Memo1->Lines->Add("-1层 ");
+                     for(I = 8;I < 16;I++){
+                         value = BUFF[I] /16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         a1 = String(Data);
+                         value = BUFF[I] % 16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         numberOne = numberOne + a1 + String(Data);
+                      }
+               displayMemoelevatornumber(numberOne);  //解析层数数据
+               Buf[6]=0x03;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               if(BUFF[7]==0x00){        //读取 地址1 判断
+                   for(I = 8;I < 24;I++){
+                        value = BUFF[I] /16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         a1 = String(Data);
+                         value = BUFF[I] % 16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         numberTow = numberTow + a1 + String(Data);
+                      }
+                  Buf[6]=0x04;
+                  CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+                  CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+                  if(BUFF[7]==0x00){      //读取地址2 判断
+                   for(I = 8;I < 24;I++){
+                         value = BUFF[I] /16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         a1 = String(Data);
+                         value = BUFF[I] % 16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         numberTow = numberTow + a1 + String(Data);
+                      }
+                      Buf[6]=0x05;
+                      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+                      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+                    if(BUFF[7]==0x00){      //读取地址3 判断
+                     for(I = 8;I < 24;I++){
+                         value = BUFF[I] /16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         a1 = String(Data);
+                         value = BUFF[I] % 16;
+                         s1 = (int)(value);
+                         itoa(s1,Data,16);
+                         numberTow = numberTow + a1 + String(Data);
+                      }
+                      displayMemoselectaddr(numberTow);  //地址  数据解析
+                    //  Form7->sButton1->Visible = true;    //进行编辑按钮显示
+                        if (faka == 1){
+                            Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
+                        }else{
+                          Form7->ShowModal();  // Form7 调用显示模式
+                        }
+                  }else{Application->MessageBoxA("读取地址3返回超时!!","问题",MB_OK);}
+               }else{Application->MessageBoxA("读取地址2返回超时!!","问题",MB_OK);}
+            }else{Application->MessageBoxA("读取地址1返回超时!!","问题",MB_OK);}
+         }else{     //根据 日期判断是否是否为未发的卡
+             if (faka == 1){
+                   Application->MessageBoxA("此卡未发卡,请您先发卡!!","问题",MB_OK);
+             }else{Application->MessageBoxA("读取层数返回超时!!","问题",MB_OK);}
+         }
+       } //时间卡 挂失卡 用户卡  判断括号
+     }else { Application->MessageBoxA("读取用户返回超时!!","问题",MB_OK);}
+    sButton17->Enabled=true; //读卡开
+   }    //  USB  选择结尾括号
 }
 //---------------------------------------------------------------------------
 
@@ -13108,7 +13136,56 @@ sButton16->Enabled=true; //
          Caption = "关闭串口失败";
 FrmBar->PBarClose();
  } else {   // HID USB
-   SYSTEMTIME *GTL;
+     SYSTEMTIME *GTL;
+      unsigned char Buf[65],BUFF[65];
+       unsigned int ToWrite,Written;
+       unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+       unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
+       unsigned int I,s1 = 8;
+       Caption = "";
+       ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+       for(I = 0; I < ToWrite; I++) {
+          if (I < s1){
+          Buf[I] = StrToIntDef(newData2[I], 0);
+          } else {
+          Buf[I] = 0xFF;
+          }
+       }
+       Buf[4] = 0x03;
+       Buf[6] = 0x01;
+       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
+           returnSign =  erase(0x01,0x04); // 擦除
+           if (returnSign ==0x00){
+               Buf[4] = 0x02;
+               Buf[6] = 0x01;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[15] = BUFF[8];
+               newData3[16] = BUFF[9];
+               newData3[17] = BUFF[10];
+               Buf[6] = 0x02;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[18] = BUFF[8];
+               newData3[19] = BUFF[9];
+               newData3[20] = BUFF[10];
+               for(I = 0; I < ToWrite; I++) {
+                  if (I < 21){
+                      Buf[I] = StrToIntDef(newData3[I], 0);
+                  } else {
+                      Buf[I] = 0xFF;
+                  }
+               }
+               CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               if (BUFF[7] ==0x00){
+                   Caption = "用户码初始化成功";
+               }else{Caption = "用户码初始化超时";}
+           }else {Caption = "擦除用户码超时";}
+       } //看是否为新卡的括号
+
    GTL=new SYSTEMTIME;
     GetLocalTime(GTL);
     second="0"+String(GTL->wSecond);
@@ -14004,10 +14081,9 @@ bool reresult = USB_DevInit(StrToInt(scom));
         }
   }
 ////------------------
-
+if(CurrentDevice == NULL)  {
 if(inipwdpoc=="1")
-if(CurrentDevice == NULL)
-  {
+
      jiamityn();
 FrmBar->PBarClose();
 ///-----------------------------------------------------------------------------------------
@@ -14044,7 +14120,7 @@ char Datas[8]= {0} ;
         sButton26->Enabled=true; //
         return;
     }
-   }
+ }
 
 //-------------------------------------------------------------------------------------------
 if(nok!="")
@@ -14182,10 +14258,12 @@ userpuid=IntToStr(StrToInt(userpuid)+1);
     carduse=="";
    }
    else {
+     if(CurrentDevice == NULL) {
    if (!USB_DevClose())
    Caption = "关闭串口失败";
    sButton26->Enabled=true; //
    return;
+   }
    }
  }
 
@@ -14282,12 +14360,13 @@ String   elevatoraddr1,Tempe,Tempe1,Tempe2,ljh14s0,ljh14s1,ljh14s2,ljh15s0,ljh15
   ljh13s=ljh14s0+ljh14s1+ljh14s2+ljh15s0+ljh15s1+ljh15s2;
   ljh13syh=leijiayihuohe(ljh13s);
   ljh13s=ljh14s0+ljh14s1+ljh14s2+ljh15s0+ljh15s1+ljh15s2+ljh13syh+"0000"+"0000000000000000";
-
+  if(CurrentDevice == NULL) {
 if(!fkqyn()){
 if (!USB_DevClose())
    Caption = "关闭串口失败";
 sButton26->Enabled=true; //
     return;
+}
 }
  // Temp=datapack(Temp);
  /*
@@ -14317,94 +14396,93 @@ if(!write13addrwz(Temp)){
  // crctemp[j] =elevatoraddr.SubString(j,2).c_str();
  // }
 
- int number = 0;
-   if(CurrentDevice == NULL)
-  {
-   if(wr0s0baes())
-   if(write13s0(ljh13s))
-   if(write13s1s2to0())
-   if(write14data(Temp,Temp1,usecount))
-   if(write15addr(elevatoraddr)) {
-    number = 1;
-   }
-  }  else {
-   unsigned char Buf[65],BUFF[65];
-   unsigned int ToWrite,Written;
-   unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
-   unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
-   unsigned int I,s2,s1 = 8;
-   AnsiString a1;
-   char value;
-   Caption = "";
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++) {
-      if (I < s1){
-        Buf[I] = StrToIntDef(newData2[I], 0);
-      } else {
-         Buf[I] = 0xFF;
+   int number = 0;
+   if(CurrentDevice == NULL) {
+     if(wr0s0baes())
+     if(write13s0(ljh13s))
+     if(write13s1s2to0())
+     if(write14data(Temp,Temp1,usecount))
+     if(write15addr(elevatoraddr)) {
+      number = 1;
       }
-     }
-      Buf[4] = 0x03;
-      Buf[6] = 0x01;
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
-     if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
-     returnSign =  erase(0x01,0x04); // 擦除
-      if (returnSign ==0x00){
-      Buf[4] = 0x02;
-      Buf[6] = 0x01;
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-      newData3[15] = BUFF[8];
-      newData3[16] = BUFF[9];
-      newData3[17] = BUFF[10];
-      Buf[6] = 0x02;
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-      newData3[18] = BUFF[8];
-      newData3[19] = BUFF[9];
-      newData3[20] = BUFF[10];
-      for(I = 0; I < ToWrite; I++) {
-      if (I < 21){
-        Buf[I] = StrToIntDef(newData3[I], 0);
-      } else {
-         Buf[I] = 0xFF;
-      }
-     }
-      CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-        if (BUFF[7] ==0x00){
-        Caption = "用户码初始化成功";
-        }else{Caption = "用户码初始化超时";}
-      }else {Caption = "擦除用户码超时";}
-      } //看是否为新卡的括号
-   returnSign  =  erase(0x02,0x03); // 擦除
-    if (returnSign ==0x00){
-    Temp=EndTime+UserCID+"0"+yxqyn;   //数据再赋值,不要加密
-    returnSign = DataWrite(newData1,Temp);
-    if (returnSign ==0x00){
-    Temp1=selectin+"0"+jbusyn;  //数据再赋值,不要加密
-       newData1[5]=0x02;
-       returnSign =  DataWrite(newData1,Temp1);
-       if (returnSign == 0x00){
-          TempOne1=elevatoraddr.SubString(1,32);
-          newData1[5]=0x03;
-          returnSign = DataWrite(newData1,TempOne1);
-           if (returnSign == 0x00){
-              TempTow1=elevatoraddr.SubString(33,32);
-              newData1[5]=0x04;
-             returnSign = DataWrite(newData1,TempTow1);
-             if (returnSign == 0x00){
-            TempStree1=elevatoraddr.SubString(65,32);
-            newData1[5]=0x05;
-            returnSign = DataWrite(newData1,TempStree1);
-            if (returnSign != 0x00){Application->MessageBoxA("第五组数据发送返回超时!!","问题",MB_OK);}
-               else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
-            } else {Application->MessageBoxA("第四组数据发送返回超时!!","问题",MB_OK);}
-         } else {Application->MessageBoxA("第三组数据发送返回超时!!","问题",MB_OK);}
-      } else {Application->MessageBoxA("第二组数据发送返回超时!!","问题",MB_OK);}
-   } else {Application->MessageBoxA("第一组数据发送返回超时!!","问题",MB_OK);}
-   } else {Application->MessageBoxA("擦除返回超时!!","问题",MB_OK);}
+     } else {
+       unsigned char Buf[65],BUFF[65];
+       unsigned int ToWrite,Written;
+       unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+       unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
+       unsigned int I,s2,s1 = 8;
+       AnsiString a1;
+       char value;
+       Caption = "";
+       ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+       for(I = 0; I < ToWrite; I++) {
+          if (I < s1){
+          Buf[I] = StrToIntDef(newData2[I], 0);
+          } else {
+          Buf[I] = 0xFF;
+          }
+       }
+       Buf[4] = 0x03;
+       Buf[6] = 0x01;
+       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
+           returnSign =  erase(0x01,0x04); // 擦除
+           if (returnSign ==0x00){
+               Buf[4] = 0x02;
+               Buf[6] = 0x01;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[15] = BUFF[8];
+               newData3[16] = BUFF[9];
+               newData3[17] = BUFF[10];
+               Buf[6] = 0x02;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[18] = BUFF[8];
+               newData3[19] = BUFF[9];
+               newData3[20] = BUFF[10];
+               for(I = 0; I < ToWrite; I++) {
+                  if (I < 21){
+                      Buf[I] = StrToIntDef(newData3[I], 0);
+                  } else {
+                      Buf[I] = 0xFF;
+                  }
+               }
+               CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               if (BUFF[7] ==0x00){
+                   Caption = "用户码初始化成功";
+               }else{Caption = "用户码初始化超时";}
+           }else {Caption = "擦除用户码超时";}
+       } //看是否为新卡的括号
+       returnSign  =  erase(0x02,0x03); // 擦除
+       if (returnSign ==0x00){                       //擦除数据返回判断
+           Temp=EndTime+UserCID+"0"+yxqyn;   //数据再赋值,不要加密
+           returnSign = DataWrite(newData1,Temp);
+           if (returnSign ==0x00){                  //第一组数据发送判断
+               Temp1=selectin+"0"+jbusyn;  //数据再赋值,不要加密
+               newData1[5]=0x02;
+               returnSign =  DataWrite(newData1,Temp1);
+               if (returnSign == 0x00){             //第二组数据发送判断
+                   TempOne1=elevatoraddr.SubString(1,32);
+                   newData1[5]=0x03;
+                   returnSign = DataWrite(newData1,TempOne1);
+                   if (returnSign == 0x00){         //第三组数据发送判断
+                       TempTow1=elevatoraddr.SubString(33,32);
+                       newData1[5]=0x04;
+                       returnSign = DataWrite(newData1,TempTow1);
+                       if (returnSign == 0x00){    //第四组数据发送判断
+                           TempStree1=elevatoraddr.SubString(65,32);
+                            newData1[5]=0x05;
+                            returnSign = DataWrite(newData1,TempStree1);
+                            if (returnSign != 0x00){Application->MessageBoxA("第五组数据发送返回超时!!","问题",MB_OK);
+                            } else { Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+                       } else {Application->MessageBoxA("第四组数据发送返回超时!!","问题",MB_OK);}
+                   } else {Application->MessageBoxA("第三组数据发送返回超时!!","问题",MB_OK);}
+               } else {Application->MessageBoxA("第二组数据发送返回超时!!","问题",MB_OK);}
+           } else {Application->MessageBoxA("第一组数据发送返回超时!!","问题",MB_OK);}
+       } else {Application->MessageBoxA("擦除返回超时!!","问题",MB_OK);}
   }
 
    if(number == 1 )
@@ -14585,11 +14663,13 @@ crct=elevatoraddr+"00000000000000000000000000000000"+Temp+Temp1;
 
 //  Temp=Temp+UserCID+countyn+tempxor+"0000000000";
 //  Temp1=selectin+"000000000000000000000000";
+if(CurrentDevice == NULL) {
 if(!fkqyn()){
 if (!USB_DevClose())
    Caption = "关闭串口失败";
 sButton26->Enabled=true; //
     return;
+}
 }
 /*
   if(bindsoft=="1"){
@@ -14605,13 +14685,95 @@ if(!write13addr(bindcon))
 */
 
 
-
+   int number1 = 0;
+  if(CurrentDevice == NULL) {
   if(wr0s0baes())
   if(write13s0(ljh13s))
   if(write13s1s2to0())
   if(write14data(Temp,Temp1,usecount))
-   if(write15addr(elevatoraddr))
-   {
+   if(write15addr(elevatoraddr)) {
+   number1 = 1;
+   }
+  } else {
+           unsigned char Buf[65],BUFF[65];
+       unsigned int ToWrite,Written;
+       unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+       unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
+       unsigned int I,s2,s1 = 8;
+       AnsiString a1;
+       char value;
+       Caption = "";
+       ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+       for(I = 0; I < ToWrite; I++) {
+          if (I < s1){
+          Buf[I] = StrToIntDef(newData2[I], 0);
+          } else {
+          Buf[I] = 0xFF;
+          }
+       }
+       Buf[4] = 0x03;
+       Buf[6] = 0x01;
+       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
+           returnSign =  erase(0x01,0x04); // 擦除
+           if (returnSign ==0x00){
+               Buf[4] = 0x02;
+               Buf[6] = 0x01;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[15] = BUFF[8];
+               newData3[16] = BUFF[9];
+               newData3[17] = BUFF[10];
+               Buf[6] = 0x02;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[18] = BUFF[8];
+               newData3[19] = BUFF[9];
+               newData3[20] = BUFF[10];
+               for(I = 0; I < ToWrite; I++) {
+                  if (I < 21){
+                      Buf[I] = StrToIntDef(newData3[I], 0);
+                  } else {
+                      Buf[I] = 0xFF;
+                  }
+               }
+               CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               if (BUFF[7] ==0x00){
+                   Caption = "用户码初始化成功";
+               }else{Caption = "用户码初始化超时";}
+           }else {Caption = "擦除用户码超时";}
+       } //看是否为新卡的括号
+       returnSign  =  erase(0x02,0x03); // 擦除
+       if (returnSign ==0x00){                       //擦除数据返回判断
+           Temp=EndTime+UserCID+"0"+yxqyn;   //数据再赋值,不要加密
+           returnSign = DataWrite(newData1,Temp);
+           if (returnSign ==0x00){                  //第一组数据发送判断
+               Temp1=selectin+"0"+jbusyn;  //数据再赋值,不要加密
+               newData1[5]=0x02;
+               returnSign =  DataWrite(newData1,Temp1);
+               if (returnSign == 0x00){             //第二组数据发送判断
+                   TempOne1=elevatoraddr.SubString(1,32);
+                   newData1[5]=0x03;
+                   returnSign = DataWrite(newData1,TempOne1);
+                   if (returnSign == 0x00){         //第三组数据发送判断
+                       TempTow1=elevatoraddr.SubString(33,32);
+                       newData1[5]=0x04;
+                       returnSign = DataWrite(newData1,TempTow1);
+                       if (returnSign == 0x00){    //第四组数据发送判断
+                           TempStree1=elevatoraddr.SubString(65,32);
+                            newData1[5]=0x05;
+                            returnSign = DataWrite(newData1,TempStree1);
+                            if (returnSign != 0x00){Application->MessageBoxA("第五组数据发送返回超时!!","问题",MB_OK);
+                            } else { Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+                       } else {Application->MessageBoxA("第四组数据发送返回超时!!","问题",MB_OK);}
+                   } else {Application->MessageBoxA("第三组数据发送返回超时!!","问题",MB_OK);}
+               } else {Application->MessageBoxA("第二组数据发送返回超时!!","问题",MB_OK);}
+           } else {Application->MessageBoxA("第一组数据发送返回超时!!","问题",MB_OK);}
+       } else {Application->MessageBoxA("擦除返回超时!!","问题",MB_OK);}
+  }
+    if (number1 == 1){
 ins="select * from fakapoc where userno='";
  ins+=StrToInt(sEdit1->Text);
  ins+="'";
@@ -14684,8 +14846,7 @@ if(win7=="2")
     userjilu(sEdit1->Text);
     bool result = USB_BeepExA(3);
     Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
-   }
-
+    }
 }
 }
 if(CurrentDevice == NULL){
@@ -14828,9 +14989,13 @@ void __fastcall TForm1::sButton30Click(TObject *Sender)
 {
 sButton30->Enabled=false;
 String Temp,Tempr,p,p1,ins,qstr,bh,yzm,no;
+unsigned char returnSign;   //写入 反正标记
+unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
 int  ln,n,d,t;
 if(MessageDlg("此卡用于恢复控制中所有已挂失的卡。 ",mtInformation,TMsgDlgButtons()<<mbOK<<mbCancel,0)==IDOK)
 {
+
+if(CurrentDevice == NULL) {
 String scom=Form1->ComboBox1->Text;
        if(scom=="")
        scom="1";
@@ -14840,6 +15005,7 @@ bool reresult = USB_DevInit(StrToInt(scom));
         sButton30->Enabled=true; //
         return;
         }
+
 ////-------------------
 if(inipwdpoc=="1")
      jiamityn();
@@ -14976,11 +15142,73 @@ delini:
     tcon->adoquery->ExecSQL();       //将卡号写入
     goto delini;
         }
+
 }
 //////*****************************************************************************************************
 ///////////////////////////////////////////////////////////////////
  if (!USB_DevClose())
          Caption = "关闭串口失败";
+   } else {
+     unsigned char Buf[65],BUFF[65];
+       unsigned int ToWrite,Written;
+       unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+       unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
+       unsigned int I,s1 = 8;
+       Caption = "";
+       ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+       for(I = 0; I < ToWrite; I++) {
+          if (I < s1){
+          Buf[I] = StrToIntDef(newData2[I], 0);
+          } else {
+          Buf[I] = 0xFF;
+          }
+       }
+       Buf[4] = 0x03;
+       Buf[6] = 0x01;
+       CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+       CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
+           returnSign =  erase(0x01,0x04); // 擦除
+           if (returnSign ==0x00){
+               Buf[4] = 0x02;
+               Buf[6] = 0x01;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[15] = BUFF[8];
+               newData3[16] = BUFF[9];
+               newData3[17] = BUFF[10];
+               Buf[6] = 0x02;
+               CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               newData3[18] = BUFF[8];
+               newData3[19] = BUFF[9];
+               newData3[20] = BUFF[10];
+               for(I = 0; I < ToWrite; I++) {
+                  if (I < 21){
+                      Buf[I] = StrToIntDef(newData3[I], 0);
+                  } else {
+                      Buf[I] = 0xFF;
+                  }
+               }
+               CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
+               CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               if (BUFF[7] ==0x00){
+                   Caption = "用户码初始化成功";
+               }else{Caption = "用户码初始化超时";}
+           }else {Caption = "擦除用户码超时";}
+       } //看是否为新卡的括号
+
+       returnSign  =  erase(0x02,0x03); // 擦除
+       if (returnSign ==0x00){                       //擦除数据返回判断
+           Temp="ABC00465726173650000000000000000";   //数据再赋值,不要加密
+           returnSign = DataWrite(newData1,Temp);
+            if(returnSign ==0x00) {
+              Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
+            } else {Application->MessageBoxA("写卡超时!!","提示",MB_OK);}
+           } else {
+           Caption = "擦除超时!!";
+           }
+   }
 }
 FrmBar->PBarClose();
    sButton30->Enabled=true;
@@ -17112,30 +17340,30 @@ char Data[32] = {0};
          Form1->Caption = "关闭串口失败";
          }
 
-} else{
+ }else{
    unsigned char Buf[65],BUFF[65];
    unsigned int ToWrite,Written;
    unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x01,0xFF};
    unsigned int I,s1 = 8;
    char Data[4] = {0};
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++) {
+   ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+   for(I = 0; I < ToWrite; I++) {
       if (I < s1){
         Buf[I] = StrToIntDef(newData2[I], 0);
       } else {
          Buf[I] = 0xFF;
       }
-     }
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-     if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
-     for(I = 8;I < 11;I++){
-         itoa(BUFF[I],Data,16);
-         fkqid = fkqid + String(Data);
-     }
+   }
+   CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+   CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+   if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
+   for(I = 8;I < 11;I++){
+       itoa(BUFF[I],Data,16);
+       fkqid = fkqid + String(Data);
+   }
        sEdit3->Text=fkqid;
 
-     }
+    }
  }
 
  sButton14->Enabled=true; //
@@ -17873,6 +18101,7 @@ delete Reg;
 }
 /////////////////////////////////////////////////////////////////////////
  //  inc=Form17->Edit1->Text;
+
 inc="select * from USAdmin where OpName='";
 inc+=Form3->sComboBox1->Text.Trim();
 inc+="'";
@@ -17905,6 +18134,7 @@ tcon->adoquery->Close();
 buttonenableyn();
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+if(CurrentDevice == NULL)  {
 String scom=Form1->ComboBox1->Text;
  if(scom=="")
      {
@@ -17956,7 +18186,94 @@ Application->MessageBoxA("发卡器连接成功!!","恭喜",MB_OK);
 }
  if (!USB_DevClose()) {
          Form1->Caption = "关闭串口失败";
-         }        
+         }
+ }else {
+  String nameOne,passwordOne,SQLName,SQLpassword;
+   unsigned char Buf[65], BUFF[65];
+   unsigned int ToWrite,Written;
+   unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+   unsigned int I,s1 = 8;
+   char Data[4] = {0};
+   ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+   for(I = 0; I < ToWrite; I++) {
+      if (I < s1){
+        Buf[I] = StrToIntDef(newData2[I], 0);
+      } else {
+         Buf[I] = 0xFF;
+      }
+    }
+    for (int J = 0;J < 2; J++){
+    if(J == 1)
+     Buf[6] = 0x01;
+     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+     CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+     if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
+      for(I = 8; I < 11;I++){
+        itoa(BUFF[I],Data,16);
+        if(J == 1) {
+          passwordOne = passwordOne + String(Data);
+        }else{
+         nameOne = nameOne + String(Data);
+        }
+      }
+     }
+    }
+SQLpassword="select conpwd from other";
+   tcon1->adoquery->Close();
+   tcon1->adoquery->SQL->Clear();
+   tcon1->adoquery->SQL->Add(SQLpassword);
+   tcon1->adoquery->Open();
+   if(tcon1->adoquery->RecordCount!=0)
+   {
+   conpwd=tcon1->adoquery->FieldByName("conpwd")->AsString.Trim();
+   conpwd=conpwd+"000000000000";
+   conpwd=conpwd.SubString(1,6);
+   }
+SQLName="select userCID from other";
+   tcon1->adoquery->Close();
+   tcon1->adoquery->SQL->Clear();
+   tcon1->adoquery->SQL->Add(SQLName);
+   tcon1->adoquery->Open();
+   if(tcon1->adoquery->RecordCount!=0)
+   {
+   userCID123=tcon1->adoquery->FieldByName("userCID")->AsString.Trim();
+   userCID123=userCID123+"000000000000";
+   userCID123=userCID123.SubString(1,6);
+   }
+   if (nameOne == userCID123 && passwordOne == conpwd){
+   sButton18->Enabled=true; //电梯设置卡
+   sButton16->Enabled = true;    //时间卡
+   sButton19->Enabled = true;  //修改电梯密码
+   sButton20->Enabled = true;  //同步卡
+   sButton25->Enabled = true;  //同步卡
+   sButton23->Enabled = true;   //挂失卡
+   sButton26->Enabled = true;  //用户发卡
+   sButton30->Enabled = true;  //恢复所有挂失
+   sButton13->Enabled = true;   //开放电梯
+   sButton39->Enabled = true;   //开放设置
+    Form1->Caption = "连接BY CALID HID_USB成功!!";
+   } else {
+ cn1="0";  //电梯设置卡
+  sButton18->Enabled=false; //电梯设置卡
+  cn2="0";  //时间卡
+  sButton16->Enabled = false;    //时间卡
+  cn3="0";  //修改电梯密码
+  sButton19->Enabled = false;  //修改电梯密码
+  sButton20->Enabled = false;  //同步卡
+  sButton25->Enabled = false;  //同步卡
+  cn4="0";  //挂失卡
+  sButton23->Enabled = false;   //挂失卡
+  cn6="0";  //用户发卡
+  sButton26->Enabled = false;  //用户发卡
+  cn9="0";//恢复所有挂失
+  sButton30->Enabled = false;  //恢复所有挂失
+  cn10="0";     //开放电梯
+  sButton13->Enabled = false;   //开放电梯
+  sButton39->Enabled = false;   //开放设置
+  Form1->Caption = "连接BY CALID HID_USB失败!!";
+   }
+
+ }       
 }
 //---------------------------------------------------------------------------
 
@@ -18109,7 +18426,7 @@ char Data[32] = {0};
 FrmBar->PBarClose();
     } else {       //hid USB  设置出厂卡
 
-    unsigned char Buf[65],BUFF[65];
+   unsigned char Buf[65],BUFF[65];
    unsigned int ToWrite,Written;
    unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x03,0x01,0x01,0xFF};
    unsigned char newData3[17] = {0x00,0xaa,0x01,0x01,0x03,0x02,0x01,0xFF,0xAB,0xC0,0x11,0x14,0x73,0x69,0x14,0x73,0x69};
@@ -19565,7 +19882,7 @@ if (!USB_DevClose())
  } else {
     unsigned char returnSign;
     unsigned char newData2[8] = {0x00,0xaa,0x01,0x01,0x03,0x01,0x01,0xFF};
-    unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x03,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
+    unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
     unsigned char Buf[65],BUFF[65];
     unsigned int ToWrite,Written,I;
     ToWrite = CurrentDevice->Caps.OutputReportByteLength;
@@ -19589,7 +19906,7 @@ if (!USB_DevClose())
          Buf[I] = 0xFF;
       }
      }
-     returnSign  =  erase(0x02,0x03); // 擦除
+     returnSign  = erase(0x01,0x03); // 擦除
      if(returnSign == 0x00){
      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  发卡器 密码
@@ -20282,14 +20599,14 @@ char Data[32] = {0};
          Form1->Caption = "关闭串口失败";
          }
    }else{
-     unsigned char returnSign = 0x01;   //写入 反正标记
-      unsigned char newData1[7]={0xaa,0x01,0x01,0x02,0x02,0x02,0xff};           //数据存放数组
+       unsigned char returnSign = 0x01;   //写入 反正标记
+       unsigned char newData1[7]={0xaa,0x01,0x01,0x02,0x02,0x02,0xff};           //数据存放数组
        userCID=sEdit15->Text.Trim();
        fkqid=userCID+"FFFFFF";
        fkqid = fkqid.SubString(1,6);
        if(fkqid != "")
         returnSign = DataWrite(newData1,fkqid);
-      if (returnSign ==0x00){
+       if (returnSign ==0x00){
        Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
       } else {Application->MessageBoxA("写卡失败！!!","提示",MB_OK);}
    }
@@ -20315,6 +20632,7 @@ if(sEdit14->Text=="calid_admin")
   sButton46->Visible=true;
   sPageControl2->Visible=true;
   sGroupBox25->Visible=true;
+  sGroupBox28->Visible=true;
 //  sButton51->Visible=true;
 //  sButton52->Visible=true;
  }
@@ -20402,30 +20720,30 @@ char Data[32] = {0};
  if (!USB_DevClose()) {
          Form1->Caption = "关闭串口失败";
          }
-    }else{
+ }else{
    unsigned char Buf[65], BUFF[65];
    unsigned int ToWrite,Written;
    unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
    unsigned int I,s1 = 8;
    char Data[4] = {0};
-    ToWrite = CurrentDevice->Caps.OutputReportByteLength;
-    for(I = 0; I < ToWrite; I++) {
+   ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+   for(I = 0; I < ToWrite; I++) {
       if (I < s1){
         Buf[I] = StrToIntDef(newData2[I], 0);
       } else {
          Buf[I] = 0xFF;
       }
-     }
-      CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-      CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-     if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
-     for(I = 8; I < 11;I++){
-         itoa(BUFF[I],Data,16);
-         fkqid = fkqid + String(Data);
-       }
-        sEdit15->Text=fkqid;
-     }
     }
+    CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+    CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+    if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
+    for(I = 8; I < 11;I++){
+        itoa(BUFF[I],Data,16);
+        fkqid = fkqid + String(Data);
+    }
+        sEdit15->Text=fkqid;
+    }
+ }
  sButton51->Enabled=true; //
 }
 //---------------------------------------------------------------------------
@@ -23659,40 +23977,87 @@ String __fastcall TForm1::bianhaoAction (unsigned char add1,unsigned char add2){
   s2 = s2 + IntToStr(s1);
   return s2;
 }
- //判断字节 第十六位是否为1
-char __fastcall TForm1::judgeFunction(unsigned char add[],int acc) {
-  char add1=0,add2 = 0,add3 = 0;
-  char add4;
-  if ((acc % 8) > 0 || acc < 8) {
-   add2 = acc / 8;
-   add3 = acc % 8;   
-  } else {
-   add2 = acc / 8 - 1;
-  }
-  add4 = add3 > 4 || add3 == 0 ? add[add2] % 16 : add[add2] / 16;
-  add3 = acc % 4;
-  switch (add3){
-  case 0:
-     add1 = (add4 / 8) % 2;
-    break;
-  case 1:
-    add1 = add4 % 2;
-    break;
-  case 2:
-    add1 =  (add4 % 4) / 2;
-    break;
-  default:
-    add1 = (add4 / 4) % 2;
-  }
-  return add1;
-}
-
-
 //---------------------------------------------------------------------------
+void __fastcall TForm1::HIDUSBchushihua(){
+  if(CurrentDevice != NULL) {
+   String nameOne,passwordOne,SQLName,SQLpassword;
+   unsigned char Buf[65], BUFF[65];
+   unsigned int ToWrite,Written;
+   unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
+   unsigned int I,s1 = 8;
+   char Data[4] = {0};
+   ToWrite = CurrentDevice->Caps.OutputReportByteLength;
+   for(I = 0; I < ToWrite; I++) {
+      if (I < s1){
+        Buf[I] = StrToIntDef(newData2[I], 0);
+      } else {
+         Buf[I] = 0xFF;
+      }
+    }
+    for (int J = 0;J < 2; J++){
+    if(J == 1)
+     Buf[6] = 0x01;
+     CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
+     CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+     if (BUFF[1] == 0xBB && BUFF[7] == 0x00){
+      for(I = 8; I < 11;I++){
+        itoa(BUFF[I],Data,16);
+         if(J == 1) {
+          passwordOne = passwordOne + String(Data);
+         }else{
+          nameOne = nameOne + String(Data);
+         }
+      }
+     }
+    }
+SQLpassword="select conpwd from other";
+   tcon1->adoquery->Close();
+   tcon1->adoquery->SQL->Clear();
+   tcon1->adoquery->SQL->Add(SQLpassword);
+   tcon1->adoquery->Open();
+   if(tcon1->adoquery->RecordCount!=0)
+   {
+   conpwd=tcon1->adoquery->FieldByName("conpwd")->AsString.Trim();
+   conpwd=conpwd+"000000000000";
+   conpwd=conpwd.SubString(1,6);
+   }
+SQLName="select userCID from other";
+   tcon1->adoquery->Close();
+   tcon1->adoquery->SQL->Clear();
+   tcon1->adoquery->SQL->Add(SQLName);
+   tcon1->adoquery->Open();
+   if(tcon1->adoquery->RecordCount!=0)
+   {
+   userCID123=tcon1->adoquery->FieldByName("userCID")->AsString.Trim();
+   userCID123=userCID123+"000000000000";
+   userCID123=userCID123.SubString(1,6);
+   }
+   if (nameOne == userCID123 && passwordOne == conpwd)
+   {
+       cn1="1";  //电梯设置卡
+       sButton18->Enabled=true; //电梯设置卡
+       cn2="1";  //时间卡
+       sButton16->Enabled = true;    //时间卡
+       cn3="1";  //修改电梯密码
+       sButton19->Enabled = true;  //修改电梯密码
+       sButton20->Enabled = true;  //同步卡
+       sButton25->Enabled = true;  //同步卡
+       cn4="1";  //挂失卡
+       sButton23->Enabled = true;   //挂失卡
+       cn6="1";  //用户发卡
+       sButton26->Enabled = true;  //用户发卡
+       cn9="1";//恢复所有挂失
+       sButton30->Enabled = true;  //恢复所有挂失
+       cn10="1";     //开放电梯
+       sButton13->Enabled = true;   //开放电梯
+       sButton39->Enabled = true;   //开放设置
+       Form1->Caption = "您已连接BY CALID HID_USB!!";
+   }else {
+     Form1->Caption = "您连接BY CALID HID_USB 与软件不匹配,请与供货商联系!!";
+    }
+  }
 
-
-
-
+}
 
 
 

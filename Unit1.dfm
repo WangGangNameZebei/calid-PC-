@@ -4,7 +4,7 @@ object Form1: TForm1
   Width = 1023
   Height = 739
   BorderIcons = [biSystemMenu, biMinimize]
-  Caption = #30005#26799#38376#31105#25511#21046#31649#29702#36719#20214' V520.133.10'
+  Caption = #30005#26799#38376#31105#25511#21046#31649#29702#36719#20214' V530.133.10'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -2355,10 +2355,10 @@ object Form1: TForm1
         Top = 0
         Width = 342
         Height = 665
-        ActivePage = sTabSheet5
+        ActivePage = sTabSheet6
         Align = alRight
         MultiLine = True
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 8
         TabPosition = tpRight
         Visible = False
@@ -3961,6 +3961,25 @@ object Form1: TForm1
           SkinData.SkinSection = 'CHECKBOX'
           ImgChecked = 0
           ImgUnchecked = 0
+        end
+      end
+      object sGroupBox28: TsGroupBox
+        Left = 20
+        Top = 536
+        Width = 197
+        Height = 105
+        Caption = #26032#21152#30028#38754
+        TabOrder = 11
+        Visible = False
+        SkinData.SkinSection = 'GROUPBOX'
+        object sButton82: TsButton
+          Left = 64
+          Top = 40
+          Width = 75
+          Height = 25
+          Caption = #28857#20987#21457#36865
+          TabOrder = 0
+          SkinData.SkinSection = 'BUTTON'
         end
       end
     end

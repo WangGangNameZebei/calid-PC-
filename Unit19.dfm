@@ -171,6 +171,7 @@ object Form19: TForm19
         Time = 41923.4450457986
         DateFormat = dfShort
         DateMode = dmComboBox
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
         Kind = dtkDate
         ParseInput = False
         TabOrder = 2
@@ -185,6 +186,7 @@ object Form19: TForm19
         Time = 41954.4490900694
         DateFormat = dfShort
         DateMode = dmComboBox
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
         Kind = dtkDate
         ParseInput = False
         TabOrder = 3
@@ -200,6 +202,7 @@ object Form19: TForm19
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
         ParentFont = False
         TabOrder = 4
         Text = '0'
@@ -246,6 +249,7 @@ object Form19: TForm19
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
         ParentFont = False
         TabOrder = 7
         Text = '100'
@@ -265,8 +269,8 @@ object Form19: TForm19
   end
   object StringGrid3: TStringGrid
     Left = 0
-    Top = 200
-    Width = 989
+    Top = 204
+    Width = 997
     Height = 457
     Align = alBottom
     ColCount = 2
