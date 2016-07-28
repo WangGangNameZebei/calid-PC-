@@ -11682,7 +11682,13 @@ else
    if(r13saddr.SubString(1,16)==readcarddata2.SubString(1,16))
     {
       int accd=("0x"+("00"+r13saddr.SubString(17,2)))^00;
-    // int accd=StrToInt(r13saddr.SubString(23,2));
+    // int accd=StrToInt(r13saddr.SubString(23,2));  255
+       if (accd == 0 && (("0x"+("00"+readcarddata2.SubString(17,2)))^00) == 255 ) {
+        accd = 255;
+       } else if (accd ==255 && (("0x"+("00"+readcarddata2.SubString(17,2)))^00) == 0){
+            accd = -1;
+       }
+
       if(accd<(("0x"+("00"+readcarddata2.SubString(17,2)))^00))
         {
          readcarddata2=r13saddr.SubString(17,4)+"0000BCC6CAFD000000000000000000000000";
@@ -23971,7 +23977,6 @@ char __fastcall TForm1::asciiChange(char sec){
 }
 ///////////数组转换成字符串 (10进制)编码
 String __fastcall TForm1::bianhaoAction (unsigned char add1,unsigned char add2){
-
   String qstr, s2;
   int s1 = (int)(add1) * 272 + (int)(add2);
   s2 = s2 + IntToStr(s1);
