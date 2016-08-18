@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 4
-  Top = 11
+  Left = 3
+  Top = 17
   Width = 1023
   Height = 739
   BorderIcons = [biSystemMenu, biMinimize]
@@ -2355,10 +2355,10 @@ object Form1: TForm1
         Top = 0
         Width = 342
         Height = 665
-        ActivePage = sTabSheet6
+        ActivePage = sTabSheet5
         Align = alRight
         MultiLine = True
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 8
         TabPosition = tpRight
         Visible = False

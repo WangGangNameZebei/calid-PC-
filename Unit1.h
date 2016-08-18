@@ -666,6 +666,7 @@ public:		// User declarations
         TJvHidDevice *CurrentDevice;
         __fastcall TForm1(TComponent* Owner);
        char __fastcall DataWrite(unsigned char data1[],AnsiString data2);
+       char* __fastcall ReadFile(unsigned char data[]);
        char __fastcall asciiChange(char sec);
        char __fastcall erase(char number,char number2);
        char __fastcall ReadData(char address);
@@ -673,6 +674,11 @@ public:		// User declarations
        String __fastcall zhuanhuanAction (unsigned char add[]);
        String __fastcall ZHAction (unsigned int add);
        void __fastcall HIDUSBchushihua();
+       char* __fastcall xor(unsigned char key[]);
+       unsigned int __fastcall crcs32( unsigned char buf[], unsigned char len);
+       String __fastcall TForm1::jishuAction (String jishuData);
+       void __fastcall hidIcJiamityn(void);
+
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

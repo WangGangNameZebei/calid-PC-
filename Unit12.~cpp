@@ -252,7 +252,7 @@ else{
 //---------------------------------------------------------------------------
 void __fastcall TForm12::FormShow(TObject *Sender)
 {
-String ins,vcn1,vcn2,vcn3,vcn4,vcn5,vcn6,vcn7,vcn8,vcn9,vcn10,vcn11,vcn12,vcn13,vcn14;
+String ins,vcn1,vcn2,vcn3,vcn4,vcn5,vcn6,vcn7,vcn8,vcn9,vcn10,vcn11,vcn12,vcn13,vcn14,vcn15;
 ins="select * from VisiblePoc";
    tcon1->adoquery->Close();
    tcon1->adoquery->SQL->Clear();
@@ -275,6 +275,7 @@ ins="select * from VisiblePoc";
    vcn12=tcon1->adoquery->FieldByName("vcn12")->AsString.Trim();
    vcn13=tcon1->adoquery->FieldByName("vcn13")->AsString.Trim();
    vcn14=tcon1->adoquery->FieldByName("vcn14")->AsString.Trim();
+   vcn15=tcon1->adoquery->FieldByName("vcn15")->AsString.Trim();
    }
 if(vcn1=="475360231")
   sCheckBox1->Checked=true;  ///初始化
@@ -359,6 +360,13 @@ if(vcn14=="8742326"){
   }
 else{
   sCheckBox16->Checked=false;
+  }
+
+if(vcn15=="2354667"){
+  sCheckBox17->Checked=true;  ///发现自制就延时及原卡停用
+  }
+else{
+  sCheckBox17->Checked=false;
   }
 }
 //---------------------------------------------------------------------------

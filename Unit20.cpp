@@ -270,6 +270,7 @@ String nok,ins,UserCID,Temp,Temp1,qstr,tp1,tp2,data1,data2;
 nok=sEdit1->Text;
 sButton2->Enabled=false; //
 unsigned char returnSign;   //写入 反正标记
+char* BuffData;
 unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
 //if(sEdit1->Text =="")
 //  {
@@ -349,24 +350,24 @@ ins="select * from userinfo where jijiangguashi='1' ";
        }
        Buf[4] = 0x03;
        Buf[6] = 0x01;
-     Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-     Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       BuffData = Form1->ReadFile(Buf); //读取  卡看是否为新卡 返回00 为新卡
+        for(I = 0;I<ToWrite;I++){
+        BUFF[I] = BuffData[I];
+       }
        if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
            returnSign =  Form1->erase(0x01,0x04); // 擦除
            if (returnSign ==0x00){
                Buf[4] = 0x02;
                Buf[6] = 0x01;
-               Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-               newData3[15] = BUFF[8];
-               newData3[16] = BUFF[9];
-               newData3[17] = BUFF[10];
+               BuffData = Form1->ReadFile(Buf); //读取
+               newData3[15] = BuffData[8];
+               newData3[16] = BuffData[9];
+               newData3[17] = BuffData[10];
                Buf[6] = 0x02;
-               Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-               newData3[18] = BUFF[8];
-               newData3[19] = BUFF[9];
-               newData3[20] = BUFF[10];
+              BuffData = Form1->ReadFile(Buf); //读取
+               newData3[18] = BuffData[8];
+               newData3[19] = BuffData[9];
+               newData3[20] = BuffData[10];
                for(I = 0; I < ToWrite; I++) {
                   if (I < 21){
                       Buf[I] = StrToIntDef(newData3[I], 0);
@@ -374,8 +375,10 @@ ins="select * from userinfo where jijiangguashi='1' ";
                       Buf[I] = 0xFF;
                   }
                }
-               Form1->CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+              BuffData = Form1->ReadFile(Buf); //读取
+               for(I = 0;I<ToWrite;I++){
+                     BUFF[I] = BuffData[I];
+                }
                if (BUFF[7] ==0x00){
                    Caption = "用户码初始化成功";
                }else{Caption = "用户码初始化超时";}
@@ -398,6 +401,7 @@ void __fastcall TForm20::sButton3Click(TObject *Sender)
 String nok,ins,UserCID,Temp,Temp1,qstr,tp1,tp2,data1,data2;
 nok=sEdit1->Text;
 unsigned char returnSign;   //写入 反正标记
+char *BuffData;
 unsigned char newData1[7]={0xaa,0x01,0x01,0x01,0x02,0x01,0xff};           //数据存放数组
 sButton3->Enabled=false; //
 //if(sEdit1->Text =="")
@@ -478,24 +482,24 @@ ins="select * from userinfo where jijiangguashi='1' ";
        }
        Buf[4] = 0x03;
        Buf[6] = 0x01;
-       Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-       Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取  卡看是否为新卡 返回00 为新卡
+       BuffData = Form1->ReadFile(Buf);
+           for(I = 0;I<ToWrite;I++){
+            BUFF[I] = BuffData[I];
+           }
        if (BUFF[1] == 0xBB && BUFF[7] == 0x00){            //新卡数据返回判断
            returnSign =  Form1->erase(0x01,0x04); // 擦除
            if (returnSign ==0x00){
                Buf[4] = 0x02;
                Buf[6] = 0x01;
-               Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-               newData3[15] = BUFF[8];
-               newData3[16] = BUFF[9];
-               newData3[17] = BUFF[10];
+               BuffData = Form1->ReadFile(Buf);
+               newData3[15] = BuffData[8];
+               newData3[16] = BuffData[9];
+               newData3[17] = BuffData[10];
                Buf[6] = 0x02;
-               Form1->CurrentDevice->WriteFile(Buf, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
-               newData3[18] = BUFF[8];
-               newData3[19] = BUFF[9];
-               newData3[20] = BUFF[10];
+                BuffData = Form1->ReadFile(Buf);
+               newData3[18] = BuffData[8];
+               newData3[19] = BuffData[9];
+               newData3[20] = BuffData[10];
                for(I = 0; I < ToWrite; I++) {
                   if (I < 21){
                       Buf[I] = StrToIntDef(newData3[I], 0);
@@ -503,8 +507,10 @@ ins="select * from userinfo where jijiangguashi='1' ";
                       Buf[I] = 0xFF;
                   }
                }
-               Form1->CurrentDevice->WriteFile(newData3, ToWrite, Written);   // 写
-               Form1->CurrentDevice->ReadFile(BUFF, ToWrite, Written);   //读取
+               BuffData = Form1->ReadFile(Buf);
+                for(I = 0;I<ToWrite;I++){
+                BUFF[I] = BuffData[I];
+               }
                if (BUFF[7] ==0x00){
                    Caption = "用户码初始化成功";
                }else{Caption = "用户码初始化超时";}
