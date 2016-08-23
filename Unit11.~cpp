@@ -16,7 +16,7 @@ TForm11 *Form11;
 
 extern int passwordyn;
 
-extern opencom();
+
 
 //---------------------------------------------------------------------------
 __fastcall TForm11::TForm11(TComponent* Owner)
@@ -63,4 +63,4 @@ tcon->adoquery->Open();
 Form11->Close();        
 }
 //---------------------------------------------------------------------------
- 
+

@@ -8,6 +8,9 @@
 #include "Unit20.h"
 extern "C" BOOL pascal StrToHexYN(String aa);
 extern "C" BOOL pascal write14data0s1s(String Blonr,String Blonr1);
+extern "C" BOOL pascal fkqyn(void);
+
+char icwzsector=0x34,icfirstsector=0x38,icsecondsector=0x3c;
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "sButton"
@@ -289,10 +292,11 @@ bool reresult = USB_DevInit(StrToInt(scom));
         sButton2->Enabled=true; //
         return;
         }
- }
+
 ////-------------------
 if(inipwdpoc=="1")
      jiamityn();
+}
 ///---------------------
 ins="select * from userinfo where jijiangguashi='1' ";
    tcon->adoquery->Close();
@@ -306,14 +310,14 @@ ins="select * from userinfo where jijiangguashi='1' ";
      tcon->adoquery->Next();
      }
    UserCID=UserCID+"000000000000000000000000000000000000000000000000";
-   if(Form1->CurrentDevice == NULL) {
+
    tp1=UserCID.SubString(1,8);
    tp2=UserCID.SubString(9,32);
 
   Temp="6D696661726503"+conpwd+tp1+"0000";
   //                                这四个0预留
   Temp1=tp2;
-
+  if(Form1->CurrentDevice == NULL) {
   // if (write14data0s(Temp))  {
     if (write14data0s1s(Temp,Temp1)) {
   //  tcon->UserSetado->Active =false;
@@ -338,9 +342,52 @@ ins="select * from userinfo where jijiangguashi='1' ";
        unsigned int ToWrite,Written;
        unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
        unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
-       unsigned int I,s1 = 8;
+       unsigned int I,s1 = 8,BSOne = 0;
+        unsigned char IcReadData1[7]={0xaa,0x01,0x30,0x70,0x01,0x38,0xFF};
+        unsigned char IcReadData2[7]={0xaa,0x01,0x30,0x70,0x02,0x30,0xFF};
+         AnsiString a1 = "00";
        Caption = "";
        ToWrite = Form1->CurrentDevice->Caps.OutputReportByteLength;
+       if(!fkqyn())
+           return;
+       IcReadData1[5] = icfirstsector;
+        returnSign = Form1->DataWrite(IcReadData1,a1); //读取HID USB  IC 卡 返回00  则是ic 卡,否则是大卡
+        if(returnSign == 0x00 || returnSign == 0xF5){    //验证成功  进行发卡
+              if(returnSign == 0xF5 && inipwdpoc=="1"){
+                Form1->hidIcJiamityn();
+                  BSOne = 1;
+               }else if (returnSign == 0x00){
+                 BSOne = 1;
+               }else {
+                 Application->MessageBoxA("此卡未进行初始化!!","提示",MB_OK);
+                 BSOne = 0;
+               }
+
+               if ( BSOne == 1){
+                   Temp = Temp + "00000000000000000000000000000000";
+                   Temp1 = Temp1 + "00000000000000000000000000000000";
+                   Temp=Temp.SubString(1,32);
+                   Temp1=Temp1.SubString(1,32);
+                   Temp = Temp + Temp1;
+                   IcReadData2[5] = icfirstsector;
+                   returnSign = Form1->DataWrite(IcReadData2,Temp);
+                   if (returnSign == 0x00){
+                       qstr="update userinfo set ";
+                       qstr+="[carduse]='2'";
+                       qstr+=" where jijiangguashi='1'";
+                       tcon->adoquery->SQL->Clear();
+                       tcon->adoquery->SQL->Add(qstr);
+                       tcon->adoquery->ExecSQL();       //将卡号写入
+                       tcon->adoquery->Close();
+                       Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
+                   } else {
+                       Application->MessageBoxA("写卡返回超时！!!","提示",MB_OK);
+                   }
+
+               }
+
+        }else{
+
        for(I = 0; I < ToWrite; I++) {
           if (I < s1){
           Buf[I] = StrToIntDef(newData2[I], 0);
@@ -391,6 +438,7 @@ ins="select * from userinfo where jijiangguashi='1' ";
     returnSign = Form1->DataWrite(newData1,data1);
      if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
                else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
+     }//判断大小卡 括号
   }
 sButton2->Enabled=true; //
 }
@@ -421,10 +469,11 @@ bool reresult = USB_DevInit(StrToInt(scom));
         sButton3->Enabled=true; //
         return;
         }
-     }
+
 ////-------------------
 if(inipwdpoc=="1")
      jiamityn();
+    }
 ///---------------------
 ins="select * from userinfo where jijiangguashi='1' ";
    tcon->adoquery->Close();
@@ -438,15 +487,13 @@ ins="select * from userinfo where jijiangguashi='1' ";
      tcon->adoquery->Next();
      }
    UserCID=UserCID+"000000000000000000000000000000000000000000000000";
-   if(Form1->CurrentDevice == NULL) {
    tp1=UserCID.SubString(1,8);
    tp2=UserCID.SubString(9,32);
 
   Temp="6D696661726505"+conpwd+tp1+"0000";
   //                                这四个0预留
   Temp1=tp2;
-
-  // if (write14data0s(Temp))  {
+ if(Form1->CurrentDevice == NULL) {
     if (write14data0s1s(Temp,Temp1)) {
   //  tcon->UserSetado->Active =false;
     qstr="update userinfo set ";
@@ -470,9 +517,51 @@ ins="select * from userinfo where jijiangguashi='1' ";
        unsigned int ToWrite,Written;
        unsigned char newData2[8]={0x00,0xaa,0x01,0x01,0x02,0x01,0x02,0xFF};
        unsigned char newData3[21] = {0x00,0xaa,0x01,0x01,0x01,0x04,0x01,0xFF,0x69,0x6E,0x69,0x74,0x69,0x61,0x6C,0x14,0x73,0x69,0x14,0x73,0x69};
-       unsigned int I,s1 = 8;
+        unsigned char IcReadData1[7]={0xaa,0x01,0x30,0x70,0x01,0x38,0xFF};
+        unsigned char IcReadData2[7]={0xaa,0x01,0x30,0x70,0x02,0x30,0xFF};
+       unsigned int I,s1 = 8,BSOne = 0;
+        AnsiString a1 = "00";
        Caption = "";
        ToWrite = Form1->CurrentDevice->Caps.OutputReportByteLength;
+       if(!fkqyn())
+           return;
+       IcReadData1[5] = icfirstsector;
+        returnSign = Form1->DataWrite(IcReadData1,a1); //读取HID USB  IC 卡 返回00  则是ic 卡,否则是大卡
+        if(returnSign == 0x00 || returnSign == 0xF5){    //验证成功  进行发卡
+              if(returnSign == 0xF5 && inipwdpoc=="1"){
+                Form1->hidIcJiamityn();
+                  BSOne = 1;
+               }else if (returnSign == 0x00){
+                 BSOne = 1;
+               }else {
+                 Application->MessageBoxA("此卡未进行初始化!!","提示",MB_OK);
+                 BSOne = 0;
+               }
+
+               if ( BSOne == 1){
+                   Temp = Temp + "00000000000000000000000000000000";
+                   Temp1 = Temp1 + "00000000000000000000000000000000";
+                   Temp=Temp.SubString(1,32);
+                   Temp1=Temp1.SubString(1,32);
+                   Temp = Temp + Temp1;
+                   IcReadData2[5] = icfirstsector;
+                   returnSign = Form1->DataWrite(IcReadData2,Temp);
+                   if (returnSign == 0x00){
+                       qstr="update userinfo set ";
+                       qstr+="[carduse]='1'";
+                       qstr+=" where jijiangguashi='1'";
+                       tcon->adoquery->SQL->Clear();
+                       tcon->adoquery->SQL->Add(qstr);
+                       tcon->adoquery->ExecSQL();       //将卡号写入
+                       tcon->adoquery->Close();
+                       Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);
+                   } else {
+                       Application->MessageBoxA("写卡返回超时！!!","提示",MB_OK);
+                   }
+
+               }
+
+          } else {
        for(I = 0; I < ToWrite; I++) {
           if (I < s1){
           Buf[I] = StrToIntDef(newData2[I], 0);
@@ -524,6 +613,7 @@ ins="select * from userinfo where jijiangguashi='1' ";
            if (returnSign != 0x00){Application->MessageBoxA("数据发送超时!!","问题",MB_OK);}
                else{ Application->MessageBoxA("写卡成功！!!","恭喜",MB_OK);}
          }
+       }
 sButton3->Enabled=true; //
 }
 //---------------------------------------------------------------------------

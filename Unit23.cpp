@@ -39,7 +39,7 @@ void __fastcall TForm23::FormShow(TObject *Sender)
    if(!onesqjiamiffyn(2))
      Form23->sCheckBox57->Checked=true;
    else
-     Form23->sCheckBox57->Checked=false;  
+     Form23->sCheckBox57->Checked=false;
 
      FrmBar->PBarGo();
 
@@ -138,3 +138,4 @@ void __fastcall TForm23::FormShow(TObject *Sender)
      FrmBar->PBarClose();
 }
 //---------------------------------------------------------------------------
+
